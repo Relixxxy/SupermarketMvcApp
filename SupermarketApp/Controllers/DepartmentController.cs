@@ -10,12 +10,23 @@ namespace SupermarketApp.Controllers
         public DepartmentController(IRepository<Department> departmentRep)
         {
             _departmentRepository = departmentRep;
-            _departmentRepository.GetAllAsync();
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
+        {
+            return View(await _departmentRepository.GetAllAsync());
+        }
+
+        public async Task<IActionResult> Create()
         {
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(Department department)
+        {
+            await _departmentRepository.CreateAsync(department);
+            return RedirectToAction("Index");
         }
     }
 }
