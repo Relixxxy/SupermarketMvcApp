@@ -10,8 +10,8 @@
         public DateTime ExpirationDate { get; set; }
         public string Image { get; set; }
         public int DepartmentId { get; set; }
-        public Department Department { get; set; }
+        public Department? Department { get; set; }
         public int ManufacturerId { get; set; }
-        public Manufacturer Manufacturer { get; set; }
+        public Manufacturer? Manufacturer { get; set; }
     }
 }
