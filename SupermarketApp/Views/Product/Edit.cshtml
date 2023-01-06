@@ -11,8 +11,15 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class='form-group mb-2'>
+                <label class="control-label" for="image">Enter Image</label>
+                <label class="add_img_lbl">
+                    <input class="form-control add_img_inp" type="file" name="image">
+                    <div class="add_img_square"></div>
+                </label>
+            </div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
@@ -44,11 +51,6 @@
                 <span asp-validation-for="ExpirationDate" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Image" class="control-label"></label>
-                <input asp-for="Image" class="form-control" />
-                <span asp-validation-for="Image" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="DepartmentId" class="control-label"></label>
                 <select asp-for="DepartmentId" class="form-control" asp-items="ViewBag.DepartmentId"></select>
                 <span asp-validation-for="DepartmentId" class="text-danger"></span>
@@ -71,5 +73,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

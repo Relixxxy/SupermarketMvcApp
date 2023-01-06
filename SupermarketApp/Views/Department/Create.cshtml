@@ -24,9 +24,9 @@
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class='form-group mb-2'>
-                <label class="control-label" for="profileImage">Enter Image</label>
+                <label class="control-label" for="image">Enter Image</label>
                 <label class="add_img_lbl">
-                    <input class="form-control add_img_inp" type="file" name="profileImage">
+                    <input class="form-control add_img_inp" type="file" name="image">
                     <div class="add_img_square"></div>
                 </label>
             </div>
@@ -42,22 +42,6 @@
 </div>
 
 @section Scripts {
-    <script>
-        $(".add_img_inp").on({
-            "change": function () {
-                var file = $(this).prop("files")[0];
-                var reader = new FileReader();
-
-                reader.onloadend = function () {
-                    $(".add_img_lbl").css("background-image", 'url(' + reader.result + ')');
-                }
-
-                if (file) {
-                    reader.readAsDataURL(file);
-                }
-            }
-        });
-    </script>
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }

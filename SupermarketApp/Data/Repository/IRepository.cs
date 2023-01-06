@@ -16,5 +16,6 @@ namespace SupermarketApp.Data.Repository
         Task<IEnumerable<TEntity>> GetAllWithIncludeAsync(
             Func<TEntity, bool> predicate,
             params Expression<Func<TEntity, object>>[] includeProperties);
+        Task<TEntity> FindByIdWithIncludeAsync(int id, params Expression<Func<TEntity, object>>[] includeProperties);
     }
 }

@@ -29,11 +29,11 @@ namespace SupermarketApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Department department, IFormFile profileImage)
+        public async Task<IActionResult> Create(Department department, IFormFile image)
         {
-            if (profileImage is not null)
+            if (image is not null)
             {
-                department.Image = await ImageToString(profileImage);
+                department.Image = await ImageToStringAsync(image);
                 ModelState[nameof(department.Image)].ValidationState = ModelValidationState.Valid;
             }
 
@@ -72,16 +72,16 @@ namespace SupermarketApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(int? id, Department department, IFormFile profileImage)
+        public async Task<ActionResult> Edit(int? id, Department department, IFormFile image)
         {
             if (id != department.Id)
             {
                 return NotFound();
             }
 
-            if (profileImage is not null)
+            if (image is not null)
             {
-                department.Image = await ImageToString(profileImage);
+                department.Image = await ImageToStringAsync(image);
                 ModelState[nameof(department.Image)].ValidationState = ModelValidationState.Valid;
             }
 
@@ -160,10 +160,10 @@ namespace SupermarketApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private async Task<string> ImageToString(IFormFile profileImage)
+        private async Task<string> ImageToStringAsync(IFormFile image)
         {
             using var ms = new MemoryStream();
-            await profileImage.CopyToAsync(ms);
+            await image.CopyToAsync(ms);
 
             return Convert.ToBase64String(ms.ToArray());
         }

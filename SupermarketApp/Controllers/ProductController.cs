@@ -1,44 +1,45 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SupermarketApp.Data.Context;
+using SupermarketApp.Data.Repository;
 using SupermarketApp.Models;
 
 namespace SupermarketApp.Controllers
 {
     public class ProductController : Controller
     {
-        private readonly SupermarketContext _context;
+        private readonly IRepository<Product> _productResository;
+        private readonly IRepository<Department> _departmentResository;
+        private readonly IRepository<Manufacturer> _manufacturerResository;
 
-        public ProductController(SupermarketContext context)
+        public ProductController(IRepository<Product> pr, IRepository<Department> dr, IRepository<Manufacturer> mr)
         {
-            _context = context;
+            _productResository = pr;
+            _departmentResository = dr;
+            _manufacturerResository = mr;
         }
 
         // GET: Product
         public async Task<IActionResult> Index()
         {
-            var supermarketContext = _context.Products.Include(p => p.Department).Include(p => p.Manufacturer);
-            return View(await supermarketContext.ToListAsync());
+            var products = await _productResository.GetAllWithIncludeAsync(e => e.Department, e => e.Manufacturer);
+
+            return View(products);
         }
 
         // GET: Product/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Products == null)
+            if (id is null)
             {
                 return NotFound();
             }
 
-            var product = await _context.Products
-                .Include(p => p.Department)
-                .Include(p => p.Manufacturer)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (product == null)
+            var product = await _productResository.FindByIdWithIncludeAsync(id.Value, p => p.Department, p => p.Manufacturer);
+
+            if (product is null)
             {
                 return NotFound();
             }
@@ -47,10 +48,10 @@ namespace SupermarketApp.Controllers
         }
 
         // GET: Product/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Description");
-            ViewData["ManufacturerId"] = new SelectList(_context.Manufacturers, "Id", "Name");
+            ViewData["DepartmentId"] = new SelectList(await _departmentResository.GetAllAsync(), "Id", "Name");
+            ViewData["ManufacturerId"] = new SelectList(await _manufacturerResository.GetAllAsync(), "Id", "Name");
             return View();
         }
 
@@ -59,36 +60,42 @@ namespace SupermarketApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Description,Price,Amount,CreationDate,ExpirationDate,Image,DepartmentId,ManufacturerId,Id")] Product product)
+        public async Task<IActionResult> Create(Product product, IFormFile image)
         {
+            if (image is not null)
+            {
+                product.Image = await ImageToStringAsync(image);
+                ModelState[nameof(product.Image)].ValidationState = ModelValidationState.Valid;
+            }
+
             if (ModelState.IsValid)
             {
-                _context.Add(product);
-                await _context.SaveChangesAsync();
+                await _productResository.CreateAsync(product);
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", product.DepartmentId);
-            ViewData["ManufacturerId"] = new SelectList(_context.Manufacturers, "Id", "Name", product.ManufacturerId);
+            ViewData["DepartmentId"] = new SelectList(await _departmentResository.GetAllAsync(), "Id", "Name", product.DepartmentId);
+            ViewData["ManufacturerId"] = new SelectList(await _manufacturerResository.GetAllAsync(), "Id", "Name", product.ManufacturerId);
             return View(product);
         }
 
         // GET: Product/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Products == null)
+            if (id is null)
             {
                 return NotFound();
             }
 
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
+            var product = await _productResository.FindByIdAsync(id.Value);
+
+            if (product is null)
             {
                 return NotFound();
             }
 
-            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", product.DepartmentId);
-            ViewData["ManufacturerId"] = new SelectList(_context.Manufacturers, "Id", "Name", product.ManufacturerId);
+            ViewData["DepartmentId"] = new SelectList(await _departmentResository.GetAllAsync(), "Id", "Name", product.DepartmentId);
+            ViewData["ManufacturerId"] = new SelectList(await _manufacturerResository.GetAllAsync(), "Id", "Name", product.ManufacturerId);
             return View(product);
         }
 
@@ -97,19 +104,24 @@ namespace SupermarketApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Name,Description,Price,Amount,CreationDate,ExpirationDate,Image,DepartmentId,ManufacturerId,Id")] Product product)
+        public async Task<IActionResult> Edit(int id, Product product, IFormFile image)
         {
             if (id != product.Id)
             {
                 return NotFound();
             }
 
+            if (image is not null)
+            {
+                product.Image = await ImageToStringAsync(image);
+                ModelState[nameof(product.Image)].ValidationState = ModelValidationState.Valid;
+            }
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(product);
-                    await _context.SaveChangesAsync();
+                    await _productResository.UpdateAsync(product);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -126,24 +138,22 @@ namespace SupermarketApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", product.DepartmentId);
-            ViewData["ManufacturerId"] = new SelectList(_context.Manufacturers, "Id", "Name", product.ManufacturerId);
+            ViewData["DepartmentId"] = new SelectList(await _departmentResository.GetAllAsync(), "Id", "Name", product.DepartmentId);
+            ViewData["ManufacturerId"] = new SelectList(await _manufacturerResository.GetAllAsync(), "Id", "Name", product.ManufacturerId);
             return View(product);
         }
 
         // GET: Product/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Products == null)
+            if (id is null)
             {
                 return NotFound();
             }
 
-            var product = await _context.Products
-                .Include(p => p.Department)
-                .Include(p => p.Manufacturer)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (product == null)
+            var product = await _productResository.FindByIdWithIncludeAsync(id.Value, p => p.Department, p => p.Manufacturer);
+
+            if (product is null)
             {
                 return NotFound();
             }
@@ -157,24 +167,26 @@ namespace SupermarketApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Products == null)
+            var product = await _productResository.FindByIdAsync(id);
+
+            if (product is not null)
             {
-                return Problem("Entity set 'SupermarketContext.Products'  is null.");
+                await _productResository.RemoveAsync(product);
             }
 
-            var product = await _context.Products.FindAsync(id);
-            if (product != null)
-            {
-                _context.Products.Remove(product);
-            }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+        private async Task<string> ImageToStringAsync(IFormFile image)
+        {
+            using var ms = new MemoryStream();
+            await image.CopyToAsync(ms);
+
+            return Convert.ToBase64String(ms.ToArray());
         }
 
         private bool ProductExists(int id)
         {
-            return (_context.Products?.Any(e => e.Id == id)).GetValueOrDefault();
+            return _productResository.FindByIdAsync(id) is not null;
         }
     }
 }

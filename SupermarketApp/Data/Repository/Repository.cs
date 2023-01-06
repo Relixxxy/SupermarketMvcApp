@@ -63,6 +63,12 @@ namespace SupermarketApp.Data.Repository
             return await Task.Run(() => GetAllWithInclude(predicate, includeProperties));
         }
 
+        public async Task<TEntity> FindByIdWithIncludeAsync(int id, params Expression<Func<TEntity, object>>[] includeProperties)
+        {
+            var query = Include(includeProperties);
+            return await query.FirstOrDefaultAsync(e => e.Id == id);
+        }
+
         public IEnumerable<TEntity> GetAllWithInclude(params Expression<Func<TEntity, object>>[] includeProperties)
         {
             return Include(includeProperties).ToList();

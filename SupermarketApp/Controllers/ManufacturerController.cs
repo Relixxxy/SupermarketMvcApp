@@ -1,43 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
-using SupermarketApp.Data.Context;
+using SupermarketApp.Data.Repository;
 using SupermarketApp.Models;
 
 namespace SupermarketApp.Controllers
 {
     public class ManufacturerController : Controller
     {
-        private readonly SupermarketContext _context;
+        private readonly IRepository<Manufacturer> _manufacturerRepository;
 
-        public ManufacturerController(SupermarketContext context)
+        public ManufacturerController(IRepository<Manufacturer> repository)
         {
-            _context = context;
+            _manufacturerRepository = repository;
         }
 
-        // GET: Manufacturer
         public async Task<IActionResult> Index()
         {
-            return _context.Manufacturers != null ?
-                        View(await _context.Manufacturers.ToListAsync()) :
-                        Problem("Entity set 'SupermarketContext.Manufacturers'  is null.");
+            return View(await _manufacturerRepository.GetAllAsync());
         }
 
-        // GET: Manufacturer/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Manufacturers == null)
+            if (id is null)
             {
                 return NotFound();
             }
 
-            var manufacturer = await _context.Manufacturers
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (manufacturer == null)
+            var manufacturer = await _manufacturerRepository.FindByIdAsync(id.Value);
+
+            if (manufacturer is null)
             {
                 return NotFound();
             }
@@ -45,40 +37,40 @@ namespace SupermarketApp.Controllers
             return View(manufacturer);
         }
 
-        // GET: Manufacturer/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Manufacturer/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Image,Id")] Manufacturer manufacturer)
+        public async Task<IActionResult> Create(Manufacturer manufacturer, IFormFile image)
         {
+            if (image is not null)
+            {
+                manufacturer.Image = await ImageToStringAsync(image);
+                ModelState[nameof(manufacturer.Image)].ValidationState = ModelValidationState.Valid;
+            }
+
             if (ModelState.IsValid)
             {
-                _context.Add(manufacturer);
-                await _context.SaveChangesAsync();
+                await _manufacturerRepository.CreateAsync(manufacturer);
                 return RedirectToAction(nameof(Index));
             }
 
             return View(manufacturer);
         }
 
-        // GET: Manufacturer/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Manufacturers == null)
+            if (id is null)
             {
                 return NotFound();
             }
 
-            var manufacturer = await _context.Manufacturers.FindAsync(id);
+            var manufacturer = await _manufacturerRepository.FindByIdAsync(id.Value);
 
-            if (manufacturer == null)
+            if (manufacturer is null)
             {
                 return NotFound();
             }
@@ -86,24 +78,26 @@ namespace SupermarketApp.Controllers
             return View(manufacturer);
         }
 
-        // POST: Manufacturer/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Name,Image,Id")] Manufacturer manufacturer)
+        public async Task<IActionResult> Edit(int id, Manufacturer manufacturer, IFormFile image)
         {
             if (id != manufacturer.Id)
             {
                 return NotFound();
             }
 
+            if (image is not null)
+            {
+                manufacturer.Image = await ImageToStringAsync(image);
+                ModelState[nameof(manufacturer.Image)].ValidationState = ModelValidationState.Valid;
+            }
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(manufacturer);
-                    await _context.SaveChangesAsync();
+                    await _manufacturerRepository.UpdateAsync(manufacturer);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -126,14 +120,14 @@ namespace SupermarketApp.Controllers
         // GET: Manufacturer/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Manufacturers == null)
+            if (id is null)
             {
                 return NotFound();
             }
 
-            var manufacturer = await _context.Manufacturers
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (manufacturer == null)
+            var manufacturer = await _manufacturerRepository.FindByIdAsync(id.Value);
+
+            if (manufacturer is null)
             {
                 return NotFound();
             }
@@ -147,24 +141,29 @@ namespace SupermarketApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Manufacturers == null)
+            var manufacturer = await _manufacturerRepository.FindByIdAsync(id);
+
+            if (manufacturer is null)
             {
-                return Problem("Entity set 'SupermarketContext.Manufacturers'  is null.");
+                return NotFound();
             }
 
-            var manufacturer = await _context.Manufacturers.FindAsync(id);
-            if (manufacturer != null)
-            {
-                _context.Manufacturers.Remove(manufacturer);
-            }
+            await _manufacturerRepository.RemoveAsync(manufacturer);
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        private async Task<string> ImageToStringAsync(IFormFile image)
+        {
+            using var ms = new MemoryStream();
+            await image.CopyToAsync(ms);
+
+            return Convert.ToBase64String(ms.ToArray());
         }
 
         private bool ManufacturerExists(int id)
         {
-            return (_context.Manufacturers?.Any(e => e.Id == id)).GetValueOrDefault();
+            return _manufacturerRepository.FindByIdAsync(id) is not null;
         }
     }
 }
