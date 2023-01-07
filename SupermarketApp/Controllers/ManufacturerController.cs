@@ -1,23 +1,23 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
-using SupermarketApp.Data.Repository;
 using SupermarketApp.Models;
+using SupermarketApp.Service.Interfaces;
 
 namespace SupermarketApp.Controllers
 {
     public class ManufacturerController : Controller
     {
-        private readonly IRepository<Manufacturer> _manufacturerRepository;
+        private readonly IManufacturerService _manService;
 
-        public ManufacturerController(IRepository<Manufacturer> repository)
+        public ManufacturerController(IManufacturerService service)
         {
-            _manufacturerRepository = repository;
+            _manService = service;
         }
 
         public async Task<IActionResult> Index()
         {
-            return View(await _manufacturerRepository.GetAllAsync());
+            return View(await _manService.GetManufacturersAsync());
         }
 
         public async Task<IActionResult> Details(int? id)
@@ -27,7 +27,7 @@ namespace SupermarketApp.Controllers
                 return NotFound();
             }
 
-            var manufacturer = await _manufacturerRepository.FindByIdAsync(id.Value);
+            var manufacturer = await _manService.FindManufacturerByIdAsync(id.Value);
 
             if (manufacturer is null)
             {
@@ -54,7 +54,7 @@ namespace SupermarketApp.Controllers
 
             if (ModelState.IsValid)
             {
-                await _manufacturerRepository.CreateAsync(manufacturer);
+                await _manService.CreateManufacturerAsync(manufacturer);
                 return RedirectToAction(nameof(Index));
             }
 
@@ -68,7 +68,7 @@ namespace SupermarketApp.Controllers
                 return NotFound();
             }
 
-            var manufacturer = await _manufacturerRepository.FindByIdAsync(id.Value);
+            var manufacturer = await _manService.FindManufacturerByIdAsync(id.Value);
 
             if (manufacturer is null)
             {
@@ -97,7 +97,7 @@ namespace SupermarketApp.Controllers
             {
                 try
                 {
-                    await _manufacturerRepository.UpdateAsync(manufacturer);
+                    await _manService.UpdateManufacturerAsync(manufacturer);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -125,7 +125,7 @@ namespace SupermarketApp.Controllers
                 return NotFound();
             }
 
-            var manufacturer = await _manufacturerRepository.FindByIdAsync(id.Value);
+            var manufacturer = await _manService.FindManufacturerByIdAsync(id.Value);
 
             if (manufacturer is null)
             {
@@ -141,14 +141,14 @@ namespace SupermarketApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var manufacturer = await _manufacturerRepository.FindByIdAsync(id);
+            var manufacturer = await _manService.FindManufacturerByIdAsync(id);
 
             if (manufacturer is null)
             {
                 return NotFound();
             }
 
-            await _manufacturerRepository.RemoveAsync(manufacturer);
+            await _manService.RemoveManufacturerAsync(manufacturer);
 
             return RedirectToAction(nameof(Index));
         }
@@ -163,7 +163,7 @@ namespace SupermarketApp.Controllers
 
         private bool ManufacturerExists(int id)
         {
-            return _manufacturerRepository.FindByIdAsync(id) is not null;
+            return _manService.FindManufacturerByIdAsync(id).Result is not null;
         }
     }
 }

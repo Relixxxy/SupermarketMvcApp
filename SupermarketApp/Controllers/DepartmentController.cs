@@ -1,24 +1,30 @@
 ﻿using System.Data;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
-using SupermarketApp.Data.Repository;
 using SupermarketApp.Models;
+using SupermarketApp.Service.Interfaces;
 
 namespace SupermarketApp.Controllers
 {
     public class DepartmentController : Controller
     {
-        private readonly IRepository<Department> _departmentRepository;
-        public DepartmentController(IRepository<Department> departmentRep)
+        private readonly IDepartmentService _departService;
+        private readonly IValidator<Department> _validator;
+
+        public DepartmentController(IDepartmentService departService, IValidator<Department> validator)
         {
-            _departmentRepository = departmentRep;
+            _departService = departService;
+            _validator = validator;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return View(await _departmentRepository.GetAllAsync());
+            return View(await _departService.GetDepartmentsAsync());
         }
 
         [HttpGet]
@@ -41,15 +47,22 @@ namespace SupermarketApp.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    await _departmentRepository.CreateAsync(department);
-                    return RedirectToAction(nameof(Index));
+                    ValidationResult result = await _validator.ValidateAsync(department);
+
+                    if (result.IsValid)
+                    {
+                        await _departService.CreateDepartmentAsync(department);
+                        return RedirectToAction(nameof(Index));
+                    }
+
+                    result.AddToModelState(ModelState);
                 }
             }
             catch (DataException ex)
             {
             }
 
-            return View();
+            return View(department);
         }
 
         [HttpGet]
@@ -60,7 +73,7 @@ namespace SupermarketApp.Controllers
                 return NotFound();
             }
 
-            var department = await _departmentRepository.FindByIdAsync(id.Value);
+            var department = await _departService.FindDepartmentByIdAsync(id.Value);
 
             if (department is null)
             {
@@ -89,7 +102,14 @@ namespace SupermarketApp.Controllers
             {
                 try
                 {
-                    await _departmentRepository.UpdateAsync(department);
+                    ValidationResult result = await _validator.ValidateAsync(department);
+                    if (result.IsValid)
+                    {
+                        await _departService.UpdateDepartmentAsync(department);
+                        return RedirectToAction(nameof(Index));
+                    }
+
+                    result.AddToModelState(ModelState);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -102,8 +122,6 @@ namespace SupermarketApp.Controllers
                         throw;
                     }
                 }
-
-                return RedirectToAction(nameof(Index));
             }
 
             return View(department);
@@ -117,7 +135,7 @@ namespace SupermarketApp.Controllers
                 return NotFound();
             }
 
-            var department = await _departmentRepository.FindByIdAsync(id.Value);
+            var department = await _departService.FindDepartmentByIdAsync(id.Value);
 
             if (department is null)
             {
@@ -134,7 +152,7 @@ namespace SupermarketApp.Controllers
                 return NotFound();
             }
 
-            var department = await _departmentRepository.FindByIdAsync(id.Value);
+            var department = await _departService.FindDepartmentByIdAsync(id.Value);
 
             if (department is null)
             {
@@ -150,11 +168,11 @@ namespace SupermarketApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var department = await _departmentRepository.FindByIdAsync(id);
+            var department = await _departService.FindDepartmentByIdAsync(id);
 
-            if (department != null)
+            if (department is not null)
             {
-                await _departmentRepository.RemoveAsync(department);
+                await _departService.RemoveDepartmentAsync(department);
             }
 
             return RedirectToAction(nameof(Index));
@@ -170,7 +188,7 @@ namespace SupermarketApp.Controllers
 
         private bool DepartmentExists(int id)
         {
-            return _departmentRepository.FindByIdAsync(id) is not null;
+            return _departService.FindDepartmentByIdAsync(id).Result is not null;
         }
     }
 }

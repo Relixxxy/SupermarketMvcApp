@@ -1,6 +1,6 @@
 ﻿using SupermarketApp.Models;
 
-namespace SupermarketApp.Service
+namespace SupermarketApp.Service.Interfaces
 {
     public interface IMarketService
     {

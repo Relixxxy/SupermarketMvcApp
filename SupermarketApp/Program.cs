@@ -1,7 +1,13 @@
+using System.Reflection;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using SupermarketApp.Data.Context;
+using SupermarketApp.Data.Context.SupermarketValidation;
 using SupermarketApp.Data.Repository;
 using SupermarketApp.Models;
+using SupermarketApp.Service;
+using SupermarketApp.Service.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +19,16 @@ builder.Services.AddScoped(typeof(IRepository<Department>), typeof(Repository<De
 builder.Services.AddScoped(typeof(IRepository<Manufacturer>), typeof(Repository<Manufacturer, SupermarketContext>));
 builder.Services.AddScoped(typeof(IRepository<Product>), typeof(Repository<Product, SupermarketContext>));
 
+builder.Services.AddScoped<IDepartmentService, DepartmentService>();
+builder.Services.AddScoped<IManufacturerService, ManufacturerService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+
+builder.Services.AddScoped<IValidator<Department>, DepartmentValidator>();
+
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
 var app = builder.Build();
 

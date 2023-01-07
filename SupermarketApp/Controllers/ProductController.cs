@@ -5,26 +5,22 @@ using Microsoft.EntityFrameworkCore;
 using SupermarketApp.Data.Context;
 using SupermarketApp.Data.Repository;
 using SupermarketApp.Models;
+using SupermarketApp.Service.Interfaces;
 
 namespace SupermarketApp.Controllers
 {
     public class ProductController : Controller
     {
-        private readonly IRepository<Product> _productResository;
-        private readonly IRepository<Department> _departmentResository;
-        private readonly IRepository<Manufacturer> _manufacturerResository;
-
-        public ProductController(IRepository<Product> pr, IRepository<Department> dr, IRepository<Manufacturer> mr)
+        private readonly IProductService _prodService;
+        public ProductController(IProductService service)
         {
-            _productResository = pr;
-            _departmentResository = dr;
-            _manufacturerResository = mr;
+            _prodService = service;
         }
 
         // GET: Product
         public async Task<IActionResult> Index()
         {
-            var products = await _productResository.GetAllWithIncludeAsync(e => e.Department, e => e.Manufacturer);
+            var products = await _prodService.GetProductsWithIncludeAsync(e => e.Department, e => e.Manufacturer);
 
             return View(products);
         }
@@ -37,7 +33,7 @@ namespace SupermarketApp.Controllers
                 return NotFound();
             }
 
-            var product = await _productResository.FindByIdWithIncludeAsync(id.Value, p => p.Department, p => p.Manufacturer);
+            var product = await _prodService.FindProductByIdWithIncludeAsync(id.Value, p => p.Department, p => p.Manufacturer);
 
             if (product is null)
             {
@@ -50,8 +46,8 @@ namespace SupermarketApp.Controllers
         // GET: Product/Create
         public async Task<IActionResult> Create()
         {
-            ViewData["DepartmentId"] = new SelectList(await _departmentResository.GetAllAsync(), "Id", "Name");
-            ViewData["ManufacturerId"] = new SelectList(await _manufacturerResository.GetAllAsync(), "Id", "Name");
+            ViewData["DepartmentId"] = new SelectList(await _prodService.GetDepartmentsAsync(), "Id", "Name");
+            ViewData["ManufacturerId"] = new SelectList(await _prodService.GetManufacturersAsync(), "Id", "Name");
             return View();
         }
 
@@ -70,12 +66,12 @@ namespace SupermarketApp.Controllers
 
             if (ModelState.IsValid)
             {
-                await _productResository.CreateAsync(product);
+                await _prodService.CreateProductAsync(product);
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["DepartmentId"] = new SelectList(await _departmentResository.GetAllAsync(), "Id", "Name", product.DepartmentId);
-            ViewData["ManufacturerId"] = new SelectList(await _manufacturerResository.GetAllAsync(), "Id", "Name", product.ManufacturerId);
+            ViewData["DepartmentId"] = new SelectList(await _prodService.GetDepartmentsAsync(), "Id", "Name", product.DepartmentId);
+            ViewData["ManufacturerId"] = new SelectList(await _prodService.GetManufacturersAsync(), "Id", "Name", product.ManufacturerId);
             return View(product);
         }
 
@@ -87,15 +83,15 @@ namespace SupermarketApp.Controllers
                 return NotFound();
             }
 
-            var product = await _productResository.FindByIdAsync(id.Value);
+            var product = await _prodService.FindProductByIdAsync(id.Value);
 
             if (product is null)
             {
                 return NotFound();
             }
 
-            ViewData["DepartmentId"] = new SelectList(await _departmentResository.GetAllAsync(), "Id", "Name", product.DepartmentId);
-            ViewData["ManufacturerId"] = new SelectList(await _manufacturerResository.GetAllAsync(), "Id", "Name", product.ManufacturerId);
+            ViewData["DepartmentId"] = new SelectList(await _prodService.GetDepartmentsAsync(), "Id", "Name", product.DepartmentId);
+            ViewData["ManufacturerId"] = new SelectList(await _prodService.GetManufacturersAsync(), "Id", "Name", product.ManufacturerId);
             return View(product);
         }
 
@@ -121,7 +117,7 @@ namespace SupermarketApp.Controllers
             {
                 try
                 {
-                    await _productResository.UpdateAsync(product);
+                    await _prodService.UpdateProductAsync(product);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -138,8 +134,8 @@ namespace SupermarketApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["DepartmentId"] = new SelectList(await _departmentResository.GetAllAsync(), "Id", "Name", product.DepartmentId);
-            ViewData["ManufacturerId"] = new SelectList(await _manufacturerResository.GetAllAsync(), "Id", "Name", product.ManufacturerId);
+            ViewData["DepartmentId"] = new SelectList(await _prodService.GetDepartmentsAsync(), "Id", "Name", product.DepartmentId);
+            ViewData["ManufacturerId"] = new SelectList(await _prodService.GetManufacturersAsync(), "Id", "Name", product.ManufacturerId);
             return View(product);
         }
 
@@ -151,7 +147,7 @@ namespace SupermarketApp.Controllers
                 return NotFound();
             }
 
-            var product = await _productResository.FindByIdWithIncludeAsync(id.Value, p => p.Department, p => p.Manufacturer);
+            var product = await _prodService.FindProductByIdWithIncludeAsync(id.Value, p => p.Department, p => p.Manufacturer);
 
             if (product is null)
             {
@@ -167,15 +163,16 @@ namespace SupermarketApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var product = await _productResository.FindByIdAsync(id);
+            var product = await _prodService.FindProductByIdAsync(id);
 
             if (product is not null)
             {
-                await _productResository.RemoveAsync(product);
+                await _prodService.RemoveProductAsync(product);
             }
 
             return RedirectToAction(nameof(Index));
         }
+
         private async Task<string> ImageToStringAsync(IFormFile image)
         {
             using var ms = new MemoryStream();
@@ -186,7 +183,7 @@ namespace SupermarketApp.Controllers
 
         private bool ProductExists(int id)
         {
-            return _productResository.FindByIdAsync(id) is not null;
+            return _prodService.FindProductByIdAsync(id).Result is not null;
         }
     }
 }

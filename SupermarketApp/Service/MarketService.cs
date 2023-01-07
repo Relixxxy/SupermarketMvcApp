@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using SupermarketApp.Data.Repository;
 using SupermarketApp.Models;
+using SupermarketApp.Service.Interfaces;
 
 namespace SupermarketApp.Service
 {
