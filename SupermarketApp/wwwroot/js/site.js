@@ -1,4 +1,14 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿$(".add_img_inp").on({
+    "change": function () {
+        var file = $(this).prop("files")[0];
+        var reader = new FileReader();
 
-// Write your JavaScript code.
+        reader.onloadend = function () {
+            $(".add_img_lbl").css("background-image", 'url(' + reader.result + ')');
+        }
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    }
+});

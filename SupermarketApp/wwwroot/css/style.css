@@ -1,0 +1,40 @@
+﻿.add_img_lbl {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    background-image: url(../images/noImage.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    display: block;
+    cursor: pointer;
+}
+
+.add_img_inp {
+    display: none;
+}
+
+.add_img_square {
+    position: absolute;
+    display: none;
+    width: 100%;
+    height: 100%;
+    background-image: url(../images/addImage.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    opacity: 0.5;
+}
+
+
+.add_img_lbl:hover > div {
+    display: block;
+}
+
+.list-image {
+    width: 100px;
+    height: 100px;
+}
+
+.info-image {
+    width: 200px;
+    height: 200px;
+}

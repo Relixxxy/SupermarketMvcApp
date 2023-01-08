@@ -51,16 +51,22 @@ namespace SupermarketApp.Data.Repository
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<TEntity>> GetAllWithIncludeaAsync(params Expression<Func<TEntity, object>>[] includeProperties)
+        public async Task<IEnumerable<TEntity>> GetAllWithIncludeAsync(params Expression<Func<TEntity, object>>[] includeProperties)
         {
             return await Task.Run(() => GetAllWithInclude(includeProperties));
         }
 
-        public async Task<IEnumerable<TEntity>> GetAllWithIncludeaAsync(
+        public async Task<IEnumerable<TEntity>> GetAllWithIncludeAsync(
             Func<TEntity, bool> predicate,
             params Expression<Func<TEntity, object>>[] includeProperties)
         {
             return await Task.Run(() => GetAllWithInclude(predicate, includeProperties));
+        }
+
+        public async Task<TEntity> FindByIdWithIncludeAsync(int id, params Expression<Func<TEntity, object>>[] includeProperties)
+        {
+            var query = Include(includeProperties);
+            return await query.FirstOrDefaultAsync(e => e.Id == id);
         }
 
         public IEnumerable<TEntity> GetAllWithInclude(params Expression<Func<TEntity, object>>[] includeProperties)
