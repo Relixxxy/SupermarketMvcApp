@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation;
+using FluentValidation.AspNetCore;
+using FluentValidation.Results;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using SupermarketApp.Models;
@@ -9,10 +12,12 @@ namespace SupermarketApp.Controllers
     public class ManufacturerController : Controller
     {
         private readonly IManufacturerService _manService;
+        private readonly IValidator<Manufacturer> _validator;
 
-        public ManufacturerController(IManufacturerService service)
+        public ManufacturerController(IManufacturerService service, IValidator<Manufacturer> validator)
         {
             _manService = service;
+            _validator = validator;
         }
 
         public async Task<IActionResult> Index()
@@ -44,18 +49,25 @@ namespace SupermarketApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Manufacturer manufacturer, IFormFile image)
+        public async Task<IActionResult> Create(Manufacturer manufacturer, IFormFile imageFile)
         {
-            if (image is not null)
+            if (imageFile is not null)
             {
-                manufacturer.Image = await ImageToStringAsync(image);
+                manufacturer.Image = await ImageToStringAsync(imageFile);
                 ModelState[nameof(manufacturer.Image)].ValidationState = ModelValidationState.Valid;
             }
 
             if (ModelState.IsValid)
             {
-                await _manService.CreateManufacturerAsync(manufacturer);
-                return RedirectToAction(nameof(Index));
+                ValidationResult result = _validator.Validate(manufacturer);
+
+                if (result.IsValid)
+                {
+                    await _manService.CreateManufacturerAsync(manufacturer);
+                    return RedirectToAction(nameof(Index));
+                }
+
+                result.AddToModelState(ModelState);
             }
 
             return View(manufacturer);
@@ -80,24 +92,31 @@ namespace SupermarketApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Manufacturer manufacturer, IFormFile image)
+        public async Task<IActionResult> Edit(int id, Manufacturer manufacturer, IFormFile? imageFile)
         {
             if (id != manufacturer.Id)
             {
                 return NotFound();
             }
 
-            if (image is not null)
+            if (imageFile is not null)
             {
-                manufacturer.Image = await ImageToStringAsync(image);
-                ModelState[nameof(manufacturer.Image)].ValidationState = ModelValidationState.Valid;
+                manufacturer.Image = await ImageToStringAsync(imageFile);
             }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    await _manService.UpdateManufacturerAsync(manufacturer);
+                    ValidationResult result = _validator.Validate(manufacturer);
+
+                    if (result.IsValid)
+                    {
+                        await _manService.UpdateManufacturerAsync(manufacturer);
+                        return RedirectToAction(nameof(Index));
+                    }
+
+                    result.AddToModelState(ModelState);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -110,14 +129,11 @@ namespace SupermarketApp.Controllers
                         throw;
                     }
                 }
-
-                return RedirectToAction(nameof(Index));
             }
 
             return View(manufacturer);
         }
 
-        // GET: Manufacturer/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id is null)
@@ -135,7 +151,6 @@ namespace SupermarketApp.Controllers
             return View(manufacturer);
         }
 
-        // POST: Manufacturer/Delete/5
         [HttpPost]
         [ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -153,10 +168,10 @@ namespace SupermarketApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private async Task<string> ImageToStringAsync(IFormFile image)
+        private async Task<string> ImageToStringAsync(IFormFile imageFile)
         {
             using var ms = new MemoryStream();
-            await image.CopyToAsync(ms);
+            await imageFile.CopyToAsync(ms);
 
             return Convert.ToBase64String(ms.ToArray());
         }

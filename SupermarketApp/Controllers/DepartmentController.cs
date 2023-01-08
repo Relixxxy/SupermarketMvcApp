@@ -35,11 +35,11 @@ namespace SupermarketApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Department department, IFormFile image)
+        public async Task<IActionResult> Create(Department department, IFormFile imageFile)
         {
-            if (image is not null)
+            if (imageFile is not null)
             {
-                department.Image = await ImageToStringAsync(image);
+                department.Image = await ImageToStringAsync(imageFile);
                 ModelState[nameof(department.Image)].ValidationState = ModelValidationState.Valid;
             }
 
@@ -85,17 +85,16 @@ namespace SupermarketApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(int? id, Department department, IFormFile image)
+        public async Task<ActionResult> Edit(int? id, Department department, IFormFile? imageFile)
         {
             if (id != department.Id)
             {
                 return NotFound();
             }
 
-            if (image is not null)
+            if (imageFile is not null)
             {
-                department.Image = await ImageToStringAsync(image);
-                ModelState[nameof(department.Image)].ValidationState = ModelValidationState.Valid;
+                department.Image = await ImageToStringAsync(imageFile);
             }
 
             if (ModelState.IsValid)
@@ -162,7 +161,6 @@ namespace SupermarketApp.Controllers
             return View(department);
         }
 
-        // POST: Manufacturer/Delete/5
         [HttpPost]
         [ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -178,10 +176,10 @@ namespace SupermarketApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private async Task<string> ImageToStringAsync(IFormFile image)
+        private async Task<string> ImageToStringAsync(IFormFile imageFile)
         {
             using var ms = new MemoryStream();
-            await image.CopyToAsync(ms);
+            await imageFile.CopyToAsync(ms);
 
             return Convert.ToBase64String(ms.ToArray());
         }

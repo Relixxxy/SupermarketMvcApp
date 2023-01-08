@@ -24,6 +24,8 @@ builder.Services.AddScoped<IManufacturerService, ManufacturerService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 
 builder.Services.AddScoped<IValidator<Department>, DepartmentValidator>();
+builder.Services.AddScoped<IValidator<Manufacturer>, ManufacturerValidator>();
+builder.Services.AddScoped<IValidator<Product>, ProductValidator>();
 
 builder.Services.AddControllersWithViews();
 

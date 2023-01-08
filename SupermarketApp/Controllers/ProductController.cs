@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation;
+using FluentValidation.AspNetCore;
+using FluentValidation.Results;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using SupermarketApp.Data.Context;
-using SupermarketApp.Data.Repository;
 using SupermarketApp.Models;
 using SupermarketApp.Service.Interfaces;
 
@@ -12,12 +13,13 @@ namespace SupermarketApp.Controllers
     public class ProductController : Controller
     {
         private readonly IProductService _prodService;
-        public ProductController(IProductService service)
+        private readonly IValidator<Product> _validator;
+        public ProductController(IProductService service, IValidator<Product> validator)
         {
             _prodService = service;
+            _validator = validator;
         }
 
-        // GET: Product
         public async Task<IActionResult> Index()
         {
             var products = await _prodService.GetProductsWithIncludeAsync(e => e.Department, e => e.Manufacturer);
@@ -25,7 +27,6 @@ namespace SupermarketApp.Controllers
             return View(products);
         }
 
-        // GET: Product/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id is null)
@@ -43,7 +44,6 @@ namespace SupermarketApp.Controllers
             return View(product);
         }
 
-        // GET: Product/Create
         public async Task<IActionResult> Create()
         {
             ViewData["DepartmentId"] = new SelectList(await _prodService.GetDepartmentsAsync(), "Id", "Name");
@@ -51,23 +51,27 @@ namespace SupermarketApp.Controllers
             return View();
         }
 
-        // POST: Product/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Product product, IFormFile image)
+        public async Task<IActionResult> Create(Product product, IFormFile imageFile)
         {
-            if (image is not null)
+            if (imageFile is not null)
             {
-                product.Image = await ImageToStringAsync(image);
+                product.Image = await ImageToStringAsync(imageFile);
                 ModelState[nameof(product.Image)].ValidationState = ModelValidationState.Valid;
             }
 
             if (ModelState.IsValid)
             {
-                await _prodService.CreateProductAsync(product);
-                return RedirectToAction(nameof(Index));
+                ValidationResult result = _validator.Validate(product);
+
+                if (result.IsValid)
+                {
+                    await _prodService.CreateProductAsync(product);
+                    return RedirectToAction(nameof(Index));
+                }
+
+                result.AddToModelState(ModelState);
             }
 
             ViewData["DepartmentId"] = new SelectList(await _prodService.GetDepartmentsAsync(), "Id", "Name", product.DepartmentId);
@@ -75,7 +79,6 @@ namespace SupermarketApp.Controllers
             return View(product);
         }
 
-        // GET: Product/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id is null)
@@ -95,29 +98,33 @@ namespace SupermarketApp.Controllers
             return View(product);
         }
 
-        // POST: Product/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Product product, IFormFile image)
+        public async Task<IActionResult> Edit(int id, Product product, IFormFile? imageFile)
         {
             if (id != product.Id)
             {
                 return NotFound();
             }
 
-            if (image is not null)
+            if (imageFile is not null)
             {
-                product.Image = await ImageToStringAsync(image);
-                ModelState[nameof(product.Image)].ValidationState = ModelValidationState.Valid;
+                product.Image = await ImageToStringAsync(imageFile);
             }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    await _prodService.UpdateProductAsync(product);
+                    ValidationResult result = _validator.Validate(product);
+
+                    if (result.IsValid)
+                    {
+                        await _prodService.UpdateProductAsync(product);
+                        return RedirectToAction(nameof(Index));
+                    }
+
+                    result.AddToModelState(ModelState);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -130,8 +137,6 @@ namespace SupermarketApp.Controllers
                         throw;
                     }
                 }
-
-                return RedirectToAction(nameof(Index));
             }
 
             ViewData["DepartmentId"] = new SelectList(await _prodService.GetDepartmentsAsync(), "Id", "Name", product.DepartmentId);
@@ -139,7 +144,6 @@ namespace SupermarketApp.Controllers
             return View(product);
         }
 
-        // GET: Product/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id is null)
@@ -157,7 +161,6 @@ namespace SupermarketApp.Controllers
             return View(product);
         }
 
-        // POST: Product/Delete/5
         [HttpPost]
         [ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -173,10 +176,10 @@ namespace SupermarketApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private async Task<string> ImageToStringAsync(IFormFile image)
+        private async Task<string> ImageToStringAsync(IFormFile imageFile)
         {
             using var ms = new MemoryStream();
-            await image.CopyToAsync(ms);
+            await imageFile.CopyToAsync(ms);
 
             return Convert.ToBase64String(ms.ToArray());
         }

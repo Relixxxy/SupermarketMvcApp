@@ -3,9 +3,9 @@ using SupermarketApp.Models;
 
 namespace SupermarketApp.Data.Context.SupermarketValidation
 {
-    public class DepartmentValidator : AbstractValidator<Department>
+    public class ProductValidator : AbstractValidator<Product>
     {
-        public DepartmentValidator()
+        public ProductValidator()
         {
             RuleFor(d => d.Name)
                 .NotEmpty().WithMessage("Name can't be empty")

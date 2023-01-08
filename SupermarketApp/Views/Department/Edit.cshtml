@@ -27,12 +27,14 @@
                 string image = $"data:image/png;base64,{Model.Image}";
             }
             <div class='form-group mb-2'>
-                <label class="control-label" for="image">Enter Image</label>
+                <label class="control-label" for="imageFile">Enter Image</label>
                 <label class="add_img_lbl" style="background-image: url('@image')">
-                    <input class="form-control add_img_inp" type="file" name="image">
+                    <input class="form-control add_img_inp" type="file" name="imageFile">
                     <div class="add_img_square"></div>
                 </label>
+                <span asp-validation-for="Image" class="text-danger"></span>
             </div>
+            <input type="hidden" asp-for="Image" />
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
