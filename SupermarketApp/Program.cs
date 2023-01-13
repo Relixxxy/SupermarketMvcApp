@@ -23,8 +23,8 @@ builder.Services.AddTransient<IRepository<Manufacturer>, ManufacturerRepository>
 builder.Services.AddTransient<IRepository<Product>, ProductRepository>();
 
 builder.Services.AddTransient<IValidator<DepartmentModel>, DepartmentValidator>();
-builder.Services.AddTransient<IValidator<Manufacturer>, ManufacturerValidator>();
-builder.Services.AddTransient<IValidator<Product>, ProductValidator>();
+builder.Services.AddTransient<IValidator<ManufacturerModel>, ManufacturerValidator>();
+builder.Services.AddTransient<IValidator<ProductModel>, ProductValidator>();
 
 builder.Services.AddTransient<IDepartmentService, DepartmentService>();
 builder.Services.AddTransient<IManufacturerService, ManufacturerService>();

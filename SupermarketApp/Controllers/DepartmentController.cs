@@ -1,11 +1,5 @@
-﻿using System.Data;
-using FluentValidation;
-using FluentValidation.AspNetCore;
-using FluentValidation.Results;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SupermarketApp.Data.Entities;
 using SupermarketApp.BL.Service.Interfaces;
 using SupermarketApp.Data.Models;
 

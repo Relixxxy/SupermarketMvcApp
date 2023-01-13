@@ -1,14 +1,13 @@
-﻿using System.Linq.Expressions;
-using SupermarketApp.Data.Entities;
+﻿using SupermarketApp.Data.Models;
 
 namespace SupermarketApp.BL.Service.Interfaces
 {
     public interface IProductService
     {
-        Task CreateProductAsync(Product product);
-        Task<Product> FindProductByIdAsync(int id);
-        Task<IEnumerable<Product>> GetProductsAsync();
-        Task RemoveProductAsync(Product product);
-        Task UpdateProductAsync(Product product);
+        Task CreateProductAsync(ProductModel productModel);
+        Task<ProductModel> FindProductByIdAsync(int id);
+        Task<IEnumerable<ProductModel>> GetProductsAsync();
+        Task RemoveProductAsync(ProductModel productModel);
+        Task UpdateProductAsync(ProductModel productModel);
     }
 }

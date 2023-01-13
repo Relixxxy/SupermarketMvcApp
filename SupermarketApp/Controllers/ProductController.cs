@@ -1,23 +1,16 @@
-﻿using FluentValidation;
-using FluentValidation.AspNetCore;
-using FluentValidation.Results;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SupermarketApp.Data.Entities;
 using SupermarketApp.BL.Service.Interfaces;
+using SupermarketApp.Data.Models;
 
 namespace SupermarketApp.Core.Controllers
 {
     public class ProductController : Controller
     {
         private readonly IProductService _prodService;
-        private readonly IValidator<Product> _validator;
-        public ProductController(IProductService service, IValidator<Product> validator)
+        public ProductController(IProductService service)
         {
             _prodService = service;
-            _validator = validator;
         }
 
         public async Task<IActionResult> Index()
@@ -51,25 +44,12 @@ namespace SupermarketApp.Core.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Product product, IFormFile imageFile)
+        public async Task<IActionResult> Create(ProductModel product)
         {
-            if (imageFile is not null)
-            {
-                product.Image = await ImageToStringAsync(imageFile);
-                ModelState[nameof(product.Image)].ValidationState = ModelValidationState.Valid;
-            }
-
             if (ModelState.IsValid)
             {
-                ValidationResult result = _validator.Validate(product);
-
-                if (result.IsValid)
-                {
-                    await _prodService.CreateProductAsync(product);
-                    return RedirectToAction(nameof(Index));
-                }
-
-                result.AddToModelState(ModelState);
+                await _prodService.CreateProductAsync(product);
+                return RedirectToAction(nameof(Index));
             }
 
             return View(product);
@@ -94,31 +74,19 @@ namespace SupermarketApp.Core.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Product product, IFormFile? imageFile)
+        public async Task<IActionResult> Edit(int id, ProductModel product)
         {
             if (id != product.Id)
             {
                 return NotFound();
             }
 
-            if (imageFile is not null)
-            {
-                product.Image = await ImageToStringAsync(imageFile);
-            }
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                    ValidationResult result = _validator.Validate(product);
-
-                    if (result.IsValid)
-                    {
-                        await _prodService.UpdateProductAsync(product);
-                        return RedirectToAction(nameof(Index));
-                    }
-
-                    result.AddToModelState(ModelState);
+                    await _prodService.UpdateProductAsync(product);
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -166,14 +134,6 @@ namespace SupermarketApp.Core.Controllers
             }
 
             return RedirectToAction(nameof(Index));
-        }
-
-        private async Task<string> ImageToStringAsync(IFormFile imageFile)
-        {
-            using var ms = new MemoryStream();
-            await imageFile.CopyToAsync(ms);
-
-            return Convert.ToBase64String(ms.ToArray());
         }
 
         private bool ProductExists(int id)

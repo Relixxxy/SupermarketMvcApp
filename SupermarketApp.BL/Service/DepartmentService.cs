@@ -1,13 +1,9 @@
 ﻿using AutoMapper;
-using FluentValidation;
-using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using SupermarketApp.BL.Service.Interfaces;
 using SupermarketApp.Data.Entities;
 using SupermarketApp.Data.Mapper;
 using SupermarketApp.Data.Models;
 using SupermarketApp.Data.Repository.Interfaces;
-using System.Drawing;
 
 namespace SupermarketApp.Core.Service
 {

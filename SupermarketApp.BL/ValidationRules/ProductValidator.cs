@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
-using SupermarketApp.Data.Entities;
+using SupermarketApp.Data.Models;
 
 namespace SupermarketApp.Data.Context.SupermarketValidation
 {
-    public class ProductValidator : AbstractValidator<Product>
+    public class ProductValidator : AbstractValidator<ProductModel>
     {
         public ProductValidator()
         {

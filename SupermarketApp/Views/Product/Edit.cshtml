@@ -1,4 +1,4 @@
-﻿@model SupermarketApp.Data.Entities.Product
+﻿@model ProductModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -19,7 +19,7 @@
             <div class='form-group mb-2'>
                 <label class="control-label" for="imageFile">Enter Image</label>
                 <label class="add_img_lbl" style="background-image: url('@image')">
-                    <input class="form-control add_img_inp" type="file" name="imageFile">
+                    <input asp-for="ImageFile" class="form-control add_img_inp" type="file" >
                     <div class="add_img_square"></div>
                 </label>
                 <span asp-validation-for="Image" class="text-danger"></span>
@@ -53,16 +53,6 @@
                 <label asp-for="ExpirationDate" class="control-label"></label>
                 <input asp-for="ExpirationDate" class="form-control" />
                 <span asp-validation-for="ExpirationDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DepartmentId" class="control-label"></label>
-                <select asp-for="DepartmentId" class="form-control" asp-items="ViewBag.DepartmentId"></select>
-                <span asp-validation-for="DepartmentId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ManufacturerId" class="control-label"></label>
-                <select asp-for="ManufacturerId" class="form-control" asp-items="ViewBag.ManufacturerId"></select>
-                <span asp-validation-for="ManufacturerId" class="text-danger"></span>
             </div>
             <input type="hidden" asp-for="Id" />
             <input type="hidden" asp-for="Image" />

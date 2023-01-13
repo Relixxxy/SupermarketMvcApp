@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
-using SupermarketApp.Data.Entities;
-using SupermarketApp.Data.Models;
+﻿using SupermarketApp.Data.Models;
 
 namespace SupermarketApp.BL.Service.Interfaces
 {
