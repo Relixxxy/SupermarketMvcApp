@@ -9,6 +9,8 @@ using SupermarketApp.Data.Context.SupermarketValidation;
 using SupermarketApp.Data.Entities;
 using SupermarketApp.Data.Repository;
 using SupermarketApp.Data.Repository.Interfaces;
+using SupermarketApp.Data.Mapper;
+using SupermarketApp.Data.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,17 +18,22 @@ string? connection = builder.Configuration.GetConnectionString("DefaultConnectio
 builder.Services.AddDbContext<SupermarketContext>(options => options.UseSqlServer(connection));
 
 // Add services to the container.
-builder.Services.AddScoped<IRepository<Department>, DepartmentRepository>();
-builder.Services.AddScoped<IRepository<Manufacturer>, ManufacturerRepository>();
-builder.Services.AddScoped<IRepository<Product>, ProductRepository>();
+builder.Services.AddTransient<IRepository<Department>, DepartmentRepository>();
+builder.Services.AddTransient<IRepository<Manufacturer>, ManufacturerRepository>();
+builder.Services.AddTransient<IRepository<Product>, ProductRepository>();
 
-builder.Services.AddScoped<IDepartmentService, DepartmentService>();
-builder.Services.AddScoped<IManufacturerService, ManufacturerService>();
-builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddTransient<IValidator<DepartmentModel>, DepartmentValidator>();
+builder.Services.AddTransient<IValidator<Manufacturer>, ManufacturerValidator>();
+builder.Services.AddTransient<IValidator<Product>, ProductValidator>();
 
-builder.Services.AddScoped<IValidator<Department>, DepartmentValidator>();
-builder.Services.AddScoped<IValidator<Manufacturer>, ManufacturerValidator>();
-builder.Services.AddScoped<IValidator<Product>, ProductValidator>();
+builder.Services.AddTransient<IDepartmentService, DepartmentService>();
+builder.Services.AddTransient<IManufacturerService, ManufacturerService>();
+builder.Services.AddTransient<IProductService, ProductService>();
+
+builder.Services.AddAutoMapper(
+    typeof(DepartmentProfile),
+    typeof(ManufacturerProfile),
+    typeof(ProductProfile));
 
 builder.Services.AddControllersWithViews();
 

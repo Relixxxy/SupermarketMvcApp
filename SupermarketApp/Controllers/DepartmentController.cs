@@ -7,18 +7,17 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using SupermarketApp.Data.Entities;
 using SupermarketApp.BL.Service.Interfaces;
+using SupermarketApp.Data.Models;
 
 namespace SupermarketApp.Core.Controllers
 {
     public class DepartmentController : Controller
     {
         private readonly IDepartmentService _departService;
-        private readonly IValidator<Department> _validator;
 
-        public DepartmentController(IDepartmentService departService, IValidator<Department> validator)
+        public DepartmentController(IDepartmentService departService)
         {
             _departService = departService;
-            _validator = validator;
         }
 
         [HttpGet]
@@ -35,31 +34,12 @@ namespace SupermarketApp.Core.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Department department, IFormFile imageFile)
+        public async Task<IActionResult> Create(DepartmentModel department)
         {
-            if (imageFile is not null)
+            if (ModelState.IsValid)
             {
-                department.Image = await ImageToStringAsync(imageFile);
-                ModelState[nameof(department.Image)].ValidationState = ModelValidationState.Valid;
-            }
-
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    ValidationResult result = await _validator.ValidateAsync(department);
-
-                    if (result.IsValid)
-                    {
-                        await _departService.CreateDepartmentAsync(department);
-                        return RedirectToAction(nameof(Index));
-                    }
-
-                    result.AddToModelState(ModelState);
-                }
-            }
-            catch (DataException ex)
-            {
+                await _departService.CreateDepartmentAsync(department);
+                return RedirectToAction(nameof(Index));
             }
 
             return View(department);
@@ -85,41 +65,30 @@ namespace SupermarketApp.Core.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(int? id, Department department, IFormFile? imageFile)
+        public async Task<ActionResult> Edit(int? id, DepartmentModel department)
         {
             if (id != department.Id)
             {
-                return NotFound();
+                NotFound();
             }
 
-            if (imageFile is not null)
+            try
             {
-                department.Image = await ImageToStringAsync(imageFile);
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
+                if (ModelState.IsValid)
                 {
-                    ValidationResult result = await _validator.ValidateAsync(department);
-                    if (result.IsValid)
-                    {
-                        await _departService.UpdateDepartmentAsync(department);
-                        return RedirectToAction(nameof(Index));
-                    }
-
-                    result.AddToModelState(ModelState);
+                    await _departService.UpdateDepartmentAsync(department);
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!DepartmentExists(department.Id))
                 {
-                    if (!DepartmentExists(department.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
                 }
             }
 
@@ -174,14 +143,6 @@ namespace SupermarketApp.Core.Controllers
             }
 
             return RedirectToAction(nameof(Index));
-        }
-
-        private async Task<string> ImageToStringAsync(IFormFile imageFile)
-        {
-            using var ms = new MemoryStream();
-            await imageFile.CopyToAsync(ms);
-
-            return Convert.ToBase64String(ms.ToArray());
         }
 
         private bool DepartmentExists(int id)

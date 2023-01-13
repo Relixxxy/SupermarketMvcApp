@@ -1,4 +1,4 @@
-namespace SupermarketApp.Core.Models
+namespace SupermarketApp.Core.ViewModels
 {
     public class ErrorViewModel
     {

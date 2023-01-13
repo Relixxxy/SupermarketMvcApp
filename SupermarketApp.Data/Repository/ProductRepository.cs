@@ -21,7 +21,7 @@ namespace SupermarketApp.Data.Repository
 
         public async Task<Product> FindByIdAsync(int id)
         {
-            var product = await _context.Products.Include(p => p.Manufacturer).Include(p => p.Department).FirstOrDefaultAsync(d => d.Id == id);
+            var product = await _context.Products.AsNoTracking().Include(p => p.Manufacturer).Include(p => p.Department).FirstOrDefaultAsync(d => d.Id == id);
             return product;
         }
 

@@ -22,7 +22,7 @@ namespace SupermarketApp.Core.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var products = await _prodService.GetProductsWithIncludeAsync(e => e.Department, e => e.Manufacturer);
+            var products = await _prodService.GetProductsAsync();
 
             return View(products);
         }
@@ -34,7 +34,7 @@ namespace SupermarketApp.Core.Controllers
                 return NotFound();
             }
 
-            var product = await _prodService.FindProductByIdWithIncludeAsync(id.Value, p => p.Department, p => p.Manufacturer);
+            var product = await _prodService.FindProductByIdAsync(id.Value);
 
             if (product is null)
             {
@@ -46,8 +46,6 @@ namespace SupermarketApp.Core.Controllers
 
         public async Task<IActionResult> Create()
         {
-            ViewData["DepartmentId"] = new SelectList(await _prodService.GetDepartmentsAsync(), "Id", "Name");
-            ViewData["ManufacturerId"] = new SelectList(await _prodService.GetManufacturersAsync(), "Id", "Name");
             return View();
         }
 
@@ -74,8 +72,6 @@ namespace SupermarketApp.Core.Controllers
                 result.AddToModelState(ModelState);
             }
 
-            ViewData["DepartmentId"] = new SelectList(await _prodService.GetDepartmentsAsync(), "Id", "Name", product.DepartmentId);
-            ViewData["ManufacturerId"] = new SelectList(await _prodService.GetManufacturersAsync(), "Id", "Name", product.ManufacturerId);
             return View(product);
         }
 
@@ -93,8 +89,6 @@ namespace SupermarketApp.Core.Controllers
                 return NotFound();
             }
 
-            ViewData["DepartmentId"] = new SelectList(await _prodService.GetDepartmentsAsync(), "Id", "Name", product.DepartmentId);
-            ViewData["ManufacturerId"] = new SelectList(await _prodService.GetManufacturersAsync(), "Id", "Name", product.ManufacturerId);
             return View(product);
         }
 
@@ -139,8 +133,6 @@ namespace SupermarketApp.Core.Controllers
                 }
             }
 
-            ViewData["DepartmentId"] = new SelectList(await _prodService.GetDepartmentsAsync(), "Id", "Name", product.DepartmentId);
-            ViewData["ManufacturerId"] = new SelectList(await _prodService.GetManufacturersAsync(), "Id", "Name", product.ManufacturerId);
             return View(product);
         }
 
@@ -151,7 +143,7 @@ namespace SupermarketApp.Core.Controllers
                 return NotFound();
             }
 
-            var product = await _prodService.FindProductByIdWithIncludeAsync(id.Value, p => p.Department, p => p.Manufacturer);
+            var product = await _prodService.FindProductByIdAsync(id.Value);
 
             if (product is null)
             {
