@@ -5,10 +5,10 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
-using SupermarketApp.Models;
-using SupermarketApp.Service.Interfaces;
+using SupermarketApp.Data.Entities;
+using SupermarketApp.BL.Service.Interfaces;
 
-namespace SupermarketApp.Controllers
+namespace SupermarketApp.Core.Controllers
 {
     public class DepartmentController : Controller
     {

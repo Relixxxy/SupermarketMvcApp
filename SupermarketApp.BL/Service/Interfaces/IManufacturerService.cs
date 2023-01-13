@@ -1,0 +1,13 @@
+﻿using SupermarketApp.Data.Entities;
+
+namespace SupermarketApp.BL.Service.Interfaces
+{
+    public interface IManufacturerService
+    {
+        Task CreateManufacturerAsync(Manufacturer manufacturer);
+        Task<Manufacturer> FindManufacturerByIdAsync(int id);
+        Task<IEnumerable<Manufacturer>> GetManufacturersAsync();
+        Task RemoveManufacturerAsync(Manufacturer manufacturer);
+        Task UpdateManufacturerAsync(Manufacturer manufacturer);
+    }
+}
