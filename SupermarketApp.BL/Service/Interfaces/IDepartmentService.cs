@@ -1,14 +1,16 @@
-﻿using SupermarketApp.Data.Entities;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using SupermarketApp.Data.Entities;
+using SupermarketApp.Data.Models;
 
 namespace SupermarketApp.BL.Service.Interfaces
 {
     public interface IDepartmentService
     {
-        Task CreateDepartmentAsync(Department department);
-        Task<Department> FindDepartmentByIdAsync(int id);
-        Task<IEnumerable<Department>> GetDepartmentsAsync();
-        Task RemoveDepartmentAsync(Department department);
-        Task UpdateDepartmentAsync(Department department);
-        Task<IEnumerable<Product>> GetProductsAsync();
+        Task CreateDepartmentAsync(DepartmentModel departmentModel);
+        Task<DepartmentModel> FindDepartmentByIdAsync(int id);
+        Task<IEnumerable<DepartmentModel>> GetDepartmentsAsync();
+        Task RemoveDepartmentAsync(DepartmentModel departmentModel);
+        Task UpdateDepartmentAsync(DepartmentModel departmentModel);
+        Task<IEnumerable<ProductModel>> GetProductsAsync();
     }
 }

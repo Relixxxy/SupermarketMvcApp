@@ -18,7 +18,7 @@ namespace SupermarketApp.Data.Mapper
                 .ForMember(p => p.CreationDate, opt => opt.MapFrom(pm => pm.CreationDate))
                 .ForMember(p => p.Department, opt => opt.MapFrom(pm => pm.Department))
                 .ForMember(p => p.Manufacturer, opt => opt.MapFrom(pm => pm.Manufacturer))
-                .ForMember(p => p.Image, opt => opt.MapFrom(pm => ImageConvertor.ImageToString(pm.Image)));
+                .ForMember(p => p.Image, opt => opt.MapFrom(pm => ImageConvertor.ImageToString(pm.ImageFile)));
 
             CreateMap<Product, ProductModel>()
                 .ForMember(pm => pm.Id, opt => opt.MapFrom(p => p.Id))
@@ -30,7 +30,7 @@ namespace SupermarketApp.Data.Mapper
                 .ForMember(pm => pm.CreationDate, opt => opt.MapFrom(p => p.CreationDate))
                 .ForMember(pm => pm.Department, opt => opt.MapFrom(p => p.Department))
                 .ForMember(pm => pm.Manufacturer, opt => opt.MapFrom(p => p.Manufacturer))
-                .ForMember(pm => pm.Image, opt => opt.MapFrom(p => ImageConvertor.Base64ToImage(p.Image, p.Name)));
+                .ForMember(pm => pm.Image, opt => opt.MapFrom(p => p.Image));
         }
     }
 }

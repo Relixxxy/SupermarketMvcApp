@@ -12,7 +12,8 @@ namespace SupermarketApp.Data.Models
         public int Amount { get; set; }
         public DateTime CreationDate { get; set; }
         public DateTime ExpirationDate { get; set; }
-        public IFormFile Image { get; set; }
+        public string Image { get; set; }
+        public IFormFile ImageFile { get; set; }
         public Department? Department { get; set; }
         public Manufacturer? Manufacturer { get; set; }
     }

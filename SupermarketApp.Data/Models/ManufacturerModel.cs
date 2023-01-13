@@ -7,7 +7,8 @@ namespace SupermarketApp.Data.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public IFormFile Image { get; set; }
+        public string Image { get; set; }
+        public IFormFile ImageFile { get; set; }
         public IEnumerable<Product>? Products { get; set; }
     }
 }

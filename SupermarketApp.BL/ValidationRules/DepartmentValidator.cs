@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
-using SupermarketApp.Data.Entities;
+using SupermarketApp.Data.Models;
 
 namespace SupermarketApp.Data.Context.SupermarketValidation
 {
-    public class DepartmentValidator : AbstractValidator<Department>
+    public class DepartmentValidator : AbstractValidator<DepartmentModel>
     {
         public DepartmentValidator()
         {
