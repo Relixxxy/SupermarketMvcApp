@@ -14,7 +14,8 @@ namespace SupermarketApp.Data.Models
         public DateTime ExpirationDate { get; set; }
         public string? Image { get; set; }
         public IFormFile? ImageFile { get; set; }
-        public Department? Department { get; set; }
-        public Manufacturer? Manufacturer { get; set; }
+        public DepartmentModel? Department { get; set; }
+        public ManufacturerModel? Manufacturer { get; set; }
+        public int ManufacturerId { get; set; }
     }
 }

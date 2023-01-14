@@ -28,9 +28,9 @@
             }
             <div class='form-group mb-2'>
                 <label class="control-label" for="imageFile">Enter Image</label>
-                <label class="add_img_lbl" style="background-image: url('@image')">
-                    <input asp-for="ImageFile" class="form-control add_img_inp" type="file">
-                    <div class="add_img_square"></div>
+                <label class="image-label" style="background-image: url('@image')">
+                    <input asp-for="ImageFile" class="form-control image-input" type="file">
+                    <div class="image-square"></div>
                 </label>
                 <span asp-validation-for="ImageFile" class="text-danger"></span>
             </div>

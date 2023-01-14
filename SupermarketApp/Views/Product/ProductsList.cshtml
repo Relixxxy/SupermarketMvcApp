@@ -1,0 +1,16 @@
+﻿@model IEnumerable<ProductModel>
+
+<div class="products">
+    <ul class="products__list">
+        @foreach (var product in Model)
+        {
+            string productImage = $"data:image/jpg;base64, {product.Image}";
+            <li class="products__item">
+                <a class="product__link">
+                    <h3 class="product__name">@product.Name</h3>
+                    <img class="details__image" src="@productImage" alt="@product.Name" />
+                </a>
+            </li>
+        }       
+    </ul>
+</div>

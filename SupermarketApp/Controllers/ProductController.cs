@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SupermarketApp.BL.Service.Interfaces;
 using SupermarketApp.Data.Models;
@@ -37,14 +38,21 @@ namespace SupermarketApp.Core.Controllers
             return View(product);
         }
 
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(int? id)
         {
-            return View();
+            var product = new ProductModel();
+
+            if (id is not null)
+            {
+                product.ManufacturerId = id.Value;
+            }
+
+            return View(product);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ProductModel product)
+        public async Task<IActionResult> CreateProduct(ProductModel product)
         {
             if (ModelState.IsValid)
             {

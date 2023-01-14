@@ -6,18 +6,18 @@
 }
 
 <h1>Create</h1>
-
+<h2>@Model.ManufacturerId</h2>
 <h4>Product</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create" enctype="multipart/form-data">
+        <form asp-action="CreateProduct" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class='form-group mb-2'>
                 <label class="control-label" for="imageFile">Enter Image</label>
-                <label class="add_img_lbl">
-                    <input asp-for="ImageFile" class="form-control add_img_inp" type="file">
-                    <div class="add_img_square"></div>
+                <label class="image-label">
+                    <input asp-for="ImageFile" class="form-control image-input" type="file">
+                    <div class="image-square"></div>
                 </label>
                 <span asp-validation-for="Image" class="text-danger"></span>
             </div>
