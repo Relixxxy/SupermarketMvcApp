@@ -32,13 +32,12 @@
             <input type="hidden" asp-for="Id" />
             <input type="hidden" asp-for="Image" />
         </form>
-    </div>
-    <div class="col-8">
-        <form asp-controller="Product" asp-action="Create">
-            <input type="hidden" name="id" value="@Model.Id"/>
+        <form class="button-wrapper" asp-controller="Product" asp-action="Create">
+            <input type="hidden" name="id" value="@Model.Id" />
             <button class="btn btn-primary" type="submit">Add Product</button>
         </form>
-        
+    </div>
+    <div class="col-8">     
         @Html.Partial("../Product/ProductsList", Model.Products)
     </div>
 </div>

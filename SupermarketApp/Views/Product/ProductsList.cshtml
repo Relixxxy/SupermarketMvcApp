@@ -1,14 +1,15 @@
 ﻿@model IEnumerable<ProductModel>
 
 <div class="products">
+    <h2 class="text-center mb-5">Products</h2>
     <ul class="products__list">
         @foreach (var product in Model)
         {
             string productImage = $"data:image/jpg;base64, {product.Image}";
             <li class="products__item">
-                <a class="product__link">
-                    <h3 class="product__name">@product.Name</h3>
-                    <img class="details__image" src="@productImage" alt="@product.Name" />
+                <h3 class="text-center">@product.Name</h3>
+                <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id" class="products__link">
+                    <img class="products__image" src="@productImage" alt="@product.Name" />
                 </a>
             </li>
         }       

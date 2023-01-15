@@ -36,15 +36,12 @@
             </div>
             <input type="hidden" asp-for="Image" />
             <input type="hidden" asp-for="Id" />
-            <div class="form-group">
+            <div class="form-group mt-3 d-flex justify-content-around">
                 <input type="submit" value="Save" class="btn btn-primary" />
+                <a asp-action="Index">Back to List</a>
             </div>
         </form>
     </div>
-</div>
-
-<div class="mt-2">
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

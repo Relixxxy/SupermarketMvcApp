@@ -24,6 +24,8 @@ namespace SupermarketApp.Core.Service
                 productModel.Image = ImageConvertor.NOIMAGE;
             }
 
+            productModel.CreationDate = DateTime.Now;
+
             var product = _mapper.Map<Product>(productModel);
             await _repository.CreateAsync(product);
         }

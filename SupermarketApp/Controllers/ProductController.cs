@@ -47,6 +47,8 @@ namespace SupermarketApp.Core.Controllers
                 product.ManufacturerId = id.Value;
             }
 
+            product.ExpirationDate = DateTime.Now;
+
             return View(product);
         }
 
@@ -57,10 +59,10 @@ namespace SupermarketApp.Core.Controllers
             if (ModelState.IsValid)
             {
                 await _prodService.CreateProductAsync(product);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Edit), "Manufacturer", new { id = product.ManufacturerId });
             }
 
-            return View(product);
+            return View("Create", product);
         }
 
         public async Task<IActionResult> Edit(int? id)
@@ -94,7 +96,7 @@ namespace SupermarketApp.Core.Controllers
                 try
                 {
                     await _prodService.UpdateProductAsync(product);
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction(nameof(Edit), "Manufacturer", new { id = product.ManufacturerId });
                 }
                 catch (DbUpdateConcurrencyException)
                 {

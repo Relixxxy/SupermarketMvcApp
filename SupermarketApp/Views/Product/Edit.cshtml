@@ -55,16 +55,14 @@
                 <span asp-validation-for="ExpirationDate" class="text-danger"></span>
             </div>
             <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="ManufacturerId" />
             <input type="hidden" asp-for="Image" />
-            <div class="form-group">
+            <div class="form-group mt-3 d-flex justify-content-around">
                 <input type="submit" value="Save" class="btn btn-primary" />
+                 <a asp-controller="Manufacturer" asp-action="Edit" asp-route-id="@Model.ManufacturerId">Back to List</a>
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {
