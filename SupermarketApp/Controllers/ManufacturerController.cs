@@ -1,28 +1,23 @@
-﻿using FluentValidation;
-using FluentValidation.AspNetCore;
-using FluentValidation.Results;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SupermarketApp.Models;
-using SupermarketApp.Service.Interfaces;
+using SupermarketApp.Core.Service.Interfaces;
+using SupermarketApp.Core.Models;
 
-namespace SupermarketApp.Controllers
+namespace SupermarketApp.Core.Controllers
 {
     public class ManufacturerController : Controller
     {
         private readonly IManufacturerService _manService;
-        private readonly IValidator<Manufacturer> _validator;
 
-        public ManufacturerController(IManufacturerService service, IValidator<Manufacturer> validator)
+        public ManufacturerController(IManufacturerService service)
         {
             _manService = service;
-            _validator = validator;
         }
 
         public async Task<IActionResult> Index()
         {
-            return View(await _manService.GetManufacturersAsync());
+            var manufacturers = await _manService.GetManufacturersAsync();
+            return View(manufacturers);
         }
 
         public async Task<IActionResult> Details(int? id)
@@ -49,25 +44,12 @@ namespace SupermarketApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Manufacturer manufacturer, IFormFile imageFile)
+        public async Task<IActionResult> Create(ManufacturerModel manufacturer)
         {
-            if (imageFile is not null)
-            {
-                manufacturer.Image = await ImageToStringAsync(imageFile);
-                ModelState[nameof(manufacturer.Image)].ValidationState = ModelValidationState.Valid;
-            }
-
             if (ModelState.IsValid)
             {
-                ValidationResult result = _validator.Validate(manufacturer);
-
-                if (result.IsValid)
-                {
-                    await _manService.CreateManufacturerAsync(manufacturer);
-                    return RedirectToAction(nameof(Index));
-                }
-
-                result.AddToModelState(ModelState);
+                await _manService.CreateManufacturerAsync(manufacturer);
+                return RedirectToAction(nameof(Index));
             }
 
             return View(manufacturer);
@@ -92,31 +74,19 @@ namespace SupermarketApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Manufacturer manufacturer, IFormFile? imageFile)
+        public async Task<IActionResult> Edit(int id, ManufacturerModel manufacturer)
         {
             if (id != manufacturer.Id)
             {
                 return NotFound();
             }
 
-            if (imageFile is not null)
-            {
-                manufacturer.Image = await ImageToStringAsync(imageFile);
-            }
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                    ValidationResult result = _validator.Validate(manufacturer);
-
-                    if (result.IsValid)
-                    {
-                        await _manService.UpdateManufacturerAsync(manufacturer);
-                        return RedirectToAction(nameof(Index));
-                    }
-
-                    result.AddToModelState(ModelState);
+                    await _manService.UpdateManufacturerAsync(manufacturer);
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {

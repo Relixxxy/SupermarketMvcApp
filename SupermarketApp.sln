@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SupermarketApp", "SupermarketApp\SupermarketApp.csproj", "{8BD257E4-6592-4BCD-85CF-08971D33A347}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SupermarketApp.Core", "SupermarketApp\SupermarketApp.Core.csproj", "{8BD257E4-6592-4BCD-85CF-08971D33A347}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SupermarketApp.Data", "SupermarketApp.Data\SupermarketApp.Data.csproj", "{A825CFB8-F240-4F7A-9EF4-4B579434142B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{8BD257E4-6592-4BCD-85CF-08971D33A347}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8BD257E4-6592-4BCD-85CF-08971D33A347}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8BD257E4-6592-4BCD-85CF-08971D33A347}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A825CFB8-F240-4F7A-9EF4-4B579434142B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A825CFB8-F240-4F7A-9EF4-4B579434142B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A825CFB8-F240-4F7A-9EF4-4B579434142B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A825CFB8-F240-4F7A-9EF4-4B579434142B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

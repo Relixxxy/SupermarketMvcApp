@@ -1,8 +1,9 @@
-﻿@model SupermarketApp.Models.Department
+﻿@model DepartmentModel
 
 @{
     ViewData["Title"] = "Delete";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    string image = $"data:image/jpg;base64, {Model.Image}";
 }
 
 <h1>Delete</h1>
@@ -16,10 +17,7 @@
             @Html.DisplayNameFor(model => model.Image)
         </dt>
         <dd class="col-sm-10">
-            @{
-                string image = $"data:image/jpg;base64, {Model.Image}";
-                <img class="info-image" src="@image" alt="@Model.Name" />
-            }
+            <img class="details__image" src="@image" alt="@Model.Name" />
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Name)

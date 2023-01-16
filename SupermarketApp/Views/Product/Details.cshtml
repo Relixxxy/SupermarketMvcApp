@@ -1,8 +1,9 @@
-﻿@model SupermarketApp.Models.Product
+﻿@model ProductModel
 
 @{
     ViewData["Title"] = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    string image = $"data:image/jpg;base64, {Model.Image}";
 }
 
 <h1>Details</h1>
@@ -15,10 +16,7 @@
             @Html.DisplayNameFor(model => model.Image)
         </dt>
         <dd class="col-sm-10">
-            @{
-                string image = $"data:image/jpg;base64, {Model.Image}";
-                <img class="info-image" src="@image" alt="@Model.Name" />
-            }
+            <img class="details__image" src="@image" alt="@Model.Name" />
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Name)
@@ -72,5 +70,6 @@
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-controller="Manufacturer" asp-action="Edit" asp-route-id="@Model.ManufacturerId">Back to List</a> |
+    <a asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
 </div>
