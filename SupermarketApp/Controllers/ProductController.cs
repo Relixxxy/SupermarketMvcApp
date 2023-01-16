@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
-using SupermarketApp.BL.Service.Interfaces;
+using SupermarketApp.Core.Service.Interfaces;
 using SupermarketApp.Data.Entities;
-using SupermarketApp.Data.Models;
+using SupermarketApp.Core.Models;
 
 namespace SupermarketApp.Core.Controllers
 {

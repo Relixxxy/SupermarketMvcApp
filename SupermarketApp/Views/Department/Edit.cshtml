@@ -1,4 +1,4 @@
-﻿@using SupermarketApp.BL.Service.Interfaces;
+﻿@using SupermarketApp.Core.Service.Interfaces;
 @model DepartmentModel
 @inject IProductService ProductService
 
@@ -7,7 +7,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     string image = $"data:image/png;base64,{Model.Image}";
     var allProducts = await ProductService.GetProductsAsync();
-    var availableProducts = allProducts.Except(Model.Products);
+    var availableProducts = allProducts.Where(p => p.Department is null).Except(Model.Products);
 }
 
 

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using SupermarketApp.Data.Entities;
 
-namespace SupermarketApp.Data.Models
+namespace SupermarketApp.Core.Models
 {
     public class ProductModel
     {

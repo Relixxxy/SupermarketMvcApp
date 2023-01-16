@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SupermarketApp.BL.Service.Interfaces;
-using SupermarketApp.Data.Models;
+using SupermarketApp.Core.Service.Interfaces;
+using SupermarketApp.Core.Models;
 
 namespace SupermarketApp.Core.Controllers
 {

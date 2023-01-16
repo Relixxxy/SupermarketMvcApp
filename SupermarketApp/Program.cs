@@ -3,14 +3,14 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using SupermarketApp.Core.Service;
-using SupermarketApp.BL.Service.Interfaces;
+using SupermarketApp.Core.Service.Interfaces;
 using SupermarketApp.Data.Context;
-using SupermarketApp.Data.Context.SupermarketValidation;
+using SupermarketApp.Core.Models.ValidationRules;
 using SupermarketApp.Data.Entities;
 using SupermarketApp.Data.Repository;
 using SupermarketApp.Data.Repository.Interfaces;
-using SupermarketApp.Data.Mapper;
-using SupermarketApp.Data.Models;
+using SupermarketApp.Core.Mapper;
+using SupermarketApp.Core.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 

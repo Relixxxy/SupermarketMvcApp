@@ -12,7 +12,7 @@ using SupermarketApp.Data.Context;
 namespace SupermarketApp.Data.Migrations
 {
     [DbContext(typeof(SupermarketContext))]
-    [Migration("20230114192904_InitialCreate")]
+    [Migration("20230116202258_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -131,7 +131,7 @@ namespace SupermarketApp.Data.Migrations
                     b.HasOne("SupermarketApp.Data.Entities.Department", "Department")
                         .WithMany("Products")
                         .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("SupermarketApp.Data.Entities.Manufacturer", "Manufacturer")
                         .WithMany("Products")

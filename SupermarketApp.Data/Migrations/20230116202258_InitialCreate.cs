@@ -63,8 +63,7 @@ namespace SupermarketApp.Data.Migrations
                         name: "FK_Product_Department_DepartmentId",
                         column: x => x.DepartmentId,
                         principalTable: "Department",
-                        principalColumn: "DepartmentId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "DepartmentId");
                     table.ForeignKey(
                         name: "FK_Product_Manufacturer_ManufacturerId",
                         column: x => x.ManufacturerId,

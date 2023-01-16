@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using SupermarketApp.Data.Entities;
-using SupermarketApp.Data.Models;
+using SupermarketApp.Core.Models;
 
-namespace SupermarketApp.Data.Mapper
+namespace SupermarketApp.Core.Mapper
 {
     public class DepartmentProfile : Profile
     {

@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using SupermarketApp.BL.Service.Interfaces;
+using SupermarketApp.Core.Service.Interfaces;
 using SupermarketApp.Data.Entities;
-using SupermarketApp.Data.Mapper;
-using SupermarketApp.Data.Models;
+using SupermarketApp.Core.Mapper;
+using SupermarketApp.Core.Models;
 using SupermarketApp.Data.Repository.Interfaces;
 
 namespace SupermarketApp.Core.Service

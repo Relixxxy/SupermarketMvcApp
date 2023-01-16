@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace SupermarketApp.Data.Mapper
+namespace SupermarketApp.Core.Mapper
 {
     public static class ImageConvertor
     {

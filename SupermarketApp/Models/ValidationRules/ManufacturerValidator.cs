@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
-using SupermarketApp.Data.Models;
+using SupermarketApp.Core.Models;
 
-namespace SupermarketApp.Data.Context.SupermarketValidation
+namespace SupermarketApp.Core.Models.ValidationRules
 {
     public class ManufacturerValidator : AbstractValidator<ManufacturerModel>
     {

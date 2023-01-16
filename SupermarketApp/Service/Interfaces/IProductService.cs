@@ -1,6 +1,6 @@
-﻿using SupermarketApp.Data.Models;
+﻿using SupermarketApp.Core.Models;
 
-namespace SupermarketApp.BL.Service.Interfaces
+namespace SupermarketApp.Core.Service.Interfaces
 {
     public interface IProductService
     {
