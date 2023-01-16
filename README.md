@@ -1,6 +1,6 @@
 # SupermarketApp
 
-In this application you can create manufacturer and create products that it can produce, than you can create department in shop and add products there
+In this application you can create manufacturer and create products that it can produce, than you can create department in shop and add products there. 
 Notice that one product can't be in 2 or more department at the same time
 
 I've used such technologies:
