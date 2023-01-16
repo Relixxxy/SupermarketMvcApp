@@ -1,34 +1,25 @@
-﻿@model SupermarketApp.Models.Manufacturer
+﻿@model ManufacturerModel
 
 @{
     ViewData["Title"] = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    string image = $"data:image/jpg;base64, {Model.Image}";
 }
 
-<h1>Details</h1>
+<div class="row">
+    <div class="col-4">
+        <div class="details">
+            <h2 class="details__title">Manufacturer</h2>
+            <h3 class="details__name">@Html.DisplayFor(model => model.Name)</h3>
+            <img class="details__image" src="@image" alt="@Model.Name" />
+            <div class="details__links-wrapper">
+                <a class="details__link" asp-action="Edit" asp-route-id="@Model?.Id">Edit</a>
+                <a class="details__link" asp-action="Index">Back to List</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-8">
+        @Html.Partial("../Product/ProductsList", Model.Products)
+    </div>
+</div>
 
-<div>
-    <h4>Manufacturer</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Image)
-        </dt>
-        <dd class="col-sm-10">
-            @{
-                string image = $"data:image/jpg;base64, {Model.Image}";
-                <img class="info-image" src="@image" alt="@Model.Name" />
-            }
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>

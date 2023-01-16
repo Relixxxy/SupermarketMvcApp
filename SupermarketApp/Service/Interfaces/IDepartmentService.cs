@@ -1,13 +1,14 @@
-﻿using SupermarketApp.Models;
+﻿using SupermarketApp.Core.Models;
 
-namespace SupermarketApp.Service.Interfaces
+namespace SupermarketApp.Core.Service.Interfaces
 {
     public interface IDepartmentService
     {
-        Task CreateDepartmentAsync(Department department);
-        Task<Department> FindDepartmentByIdAsync(int id);
-        Task<IEnumerable<Department>> GetDepartmentsAsync();
-        Task RemoveDepartmentAsync(Department department);
-        Task UpdateDepartmentAsync(Department department);
+        Task CreateDepartmentAsync(DepartmentModel departmentModel);
+        Task<DepartmentModel> FindDepartmentByIdAsync(int id);
+        Task<IEnumerable<DepartmentModel>> GetDepartmentsAsync();
+        Task RemoveDepartmentAsync(DepartmentModel departmentModel);
+        Task UpdateDepartmentAsync(DepartmentModel departmentModel);
+        Task<IEnumerable<ProductModel>> GetProductsAsync();
     }
 }

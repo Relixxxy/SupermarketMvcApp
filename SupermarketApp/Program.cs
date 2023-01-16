@@ -2,12 +2,15 @@ using System.Reflection;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
+using SupermarketApp.Core.Service;
+using SupermarketApp.Core.Service.Interfaces;
 using SupermarketApp.Data.Context;
-using SupermarketApp.Data.Context.SupermarketValidation;
+using SupermarketApp.Core.Models.ValidationRules;
+using SupermarketApp.Data.Entities;
 using SupermarketApp.Data.Repository;
-using SupermarketApp.Models;
-using SupermarketApp.Service;
-using SupermarketApp.Service.Interfaces;
+using SupermarketApp.Data.Repository.Interfaces;
+using SupermarketApp.Core.Mapper;
+using SupermarketApp.Core.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,17 +18,22 @@ string? connection = builder.Configuration.GetConnectionString("DefaultConnectio
 builder.Services.AddDbContext<SupermarketContext>(options => options.UseSqlServer(connection));
 
 // Add services to the container.
-builder.Services.AddScoped(typeof(IRepository<Department>), typeof(Repository<Department, SupermarketContext>));
-builder.Services.AddScoped(typeof(IRepository<Manufacturer>), typeof(Repository<Manufacturer, SupermarketContext>));
-builder.Services.AddScoped(typeof(IRepository<Product>), typeof(Repository<Product, SupermarketContext>));
+builder.Services.AddScoped<IRepository<Department>, DepartmentRepository>();
+builder.Services.AddScoped<IRepository<Manufacturer>, ManufacturerRepository>();
+builder.Services.AddScoped<IRepository<Product>, ProductRepository>();
+
+builder.Services.AddScoped<IValidator<DepartmentModel>, DepartmentValidator>();
+builder.Services.AddScoped<IValidator<ManufacturerModel>, ManufacturerValidator>();
+builder.Services.AddScoped<IValidator<ProductModel>, ProductValidator>();
 
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<IManufacturerService, ManufacturerService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 
-builder.Services.AddScoped<IValidator<Department>, DepartmentValidator>();
-builder.Services.AddScoped<IValidator<Manufacturer>, ManufacturerValidator>();
-builder.Services.AddScoped<IValidator<Product>, ProductValidator>();
+builder.Services.AddAutoMapper(
+    typeof(DepartmentProfile),
+    typeof(ManufacturerProfile),
+    typeof(ProductProfile));
 
 builder.Services.AddControllersWithViews();
 

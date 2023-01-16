@@ -1,70 +1,59 @@
-﻿using System.Linq.Expressions;
-using SupermarketApp.Data.Repository;
-using SupermarketApp.Models;
-using SupermarketApp.Service.Interfaces;
+﻿using AutoMapper;
+using SupermarketApp.Core.Service.Interfaces;
+using SupermarketApp.Data.Entities;
+using SupermarketApp.Core.Mapper;
+using SupermarketApp.Core.Models;
+using SupermarketApp.Data.Repository.Interfaces;
 
-namespace SupermarketApp.Service
+namespace SupermarketApp.Core.Service
 {
     public class ProductService : IProductService
     {
         private readonly IRepository<Product> _repository;
-        private readonly IRepository<Department> _departmentResository;
-        private readonly IRepository<Manufacturer> _manufacturerResository;
-        public ProductService(IRepository<Product> repository, IRepository<Department> depRep, IRepository<Manufacturer> manRep)
+        private readonly IMapper _mapper;
+        public ProductService(IRepository<Product> repository, IMapper mapper)
         {
             _repository = repository;
-            _departmentResository = depRep;
-            _manufacturerResository = manRep;
+            _mapper = mapper;
         }
 
-        public async Task CreateProductAsync(Product product)
+        public async Task CreateProductAsync(ProductModel productModel)
         {
+            if (productModel.ImageFile == null)
+            {
+                productModel.Image = ImageConvertor.NOIMAGE;
+            }
+
+            productModel.CreationDate = DateTime.Now;
+
+            var product = _mapper.Map<Product>(productModel);
             await _repository.CreateAsync(product);
         }
 
-        public async Task<Product> FindProductByIdAsync(int id)
+        public async Task<ProductModel> FindProductByIdAsync(int id)
         {
-            return await _repository.FindByIdAsync(id);
+            var product = await _repository.FindByIdAsync(id);
+            var prodcutModel = _mapper.Map<ProductModel>(product);
+            return prodcutModel;
         }
 
-        public async Task<IEnumerable<Product>> GetProductsAsync()
+        public async Task<IEnumerable<ProductModel>> GetProductsAsync()
         {
-            return await _repository.GetAllAsync();
+            var products = await _repository.GetAllAsync();
+            var productModels = products.Select(_mapper.Map<ProductModel>);
+            return productModels;
         }
 
-        public async Task<IEnumerable<Product>> GetProductsAsync(Func<Product, bool> predicate)
+        public async Task RemoveProductAsync(ProductModel productModel)
         {
-            return await _repository.GetAllAsync(predicate);
-        }
-
-        public async Task RemoveProductAsync(Product product)
-        {
+            var product = _mapper.Map<Product>(productModel);
             await _repository.RemoveAsync(product);
         }
 
-        public async Task UpdateProductAsync(Product product)
+        public async Task UpdateProductAsync(ProductModel productModel)
         {
+            var product = _mapper.Map<Product>(productModel);
             await _repository.UpdateAsync(product);
-        }
-
-        public async Task<IEnumerable<Product>> GetProductsWithIncludeAsync(params Expression<Func<Product, object>>[] includeProperties)
-        {
-            return await _repository.GetAllWithIncludeAsync(includeProperties);
-        }
-
-        public async Task<Product> FindProductByIdWithIncludeAsync(int id, params Expression<Func<Product, object>>[] includeProperties)
-        {
-            return await _repository.FindByIdWithIncludeAsync(id, includeProperties);
-        }
-
-        public async Task<IEnumerable<Department>> GetDepartmentsAsync()
-        {
-            return await _departmentResository.GetAllAsync();
-        }
-
-        public async Task<IEnumerable<Manufacturer>> GetManufacturersAsync()
-        {
-            return await _manufacturerResository.GetAllAsync();
         }
     }
 }
