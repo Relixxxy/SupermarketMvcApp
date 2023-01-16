@@ -23,7 +23,7 @@ namespace SupermarketApp.Data.Context.SupermarketConfig
             builder.HasOne(e => e.Department)
                 .WithMany(e => e.Products)
                 .HasForeignKey(e => e.DepartmentId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
 
             builder.HasOne(e => e.Manufacturer)
                 .WithMany(e => e.Products)

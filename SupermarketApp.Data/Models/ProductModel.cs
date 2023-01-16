@@ -17,5 +17,17 @@ namespace SupermarketApp.Data.Models
         public DepartmentModel? Department { get; set; }
         public ManufacturerModel? Manufacturer { get; set; }
         public int ManufacturerId { get; set; }
+        public int? DepartmentId { get; set; }
+
+        public override bool Equals(object? obj)
+        {
+            var product = obj as ProductModel;
+            return Id.Equals(product.Id);
+        }
+
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
     }
 }

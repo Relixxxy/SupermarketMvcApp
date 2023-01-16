@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using SupermarketApp.BL.Service.Interfaces;
+using SupermarketApp.Data.Entities;
 using SupermarketApp.Data.Models;
 
 namespace SupermarketApp.Core.Controllers
@@ -143,7 +145,28 @@ namespace SupermarketApp.Core.Controllers
                 await _prodService.RemoveProductAsync(product);
             }
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Edit), "Manufacturer", new { id = product.ManufacturerId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangeDepartmet(int id, int departmentId, string action)
+        {
+            var product = await _prodService.FindProductByIdAsync(id);
+
+            if (action == "clear")
+            {
+                product.DepartmentId = null;
+                product.Department = null;
+            }
+            else if (action == "set")
+            {
+                product.DepartmentId = departmentId;
+            }
+
+            await _prodService.UpdateProductAsync(product);
+
+            return RedirectToAction(nameof(Edit), "Department", new { id = departmentId });
         }
 
         private bool ProductExists(int id)

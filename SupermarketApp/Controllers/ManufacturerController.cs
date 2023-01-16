@@ -16,7 +16,8 @@ namespace SupermarketApp.Core.Controllers
 
         public async Task<IActionResult> Index()
         {
-            return View(await _manService.GetManufacturersAsync());
+            var manufacturers = await _manService.GetManufacturersAsync();
+            return View(manufacturers);
         }
 
         public async Task<IActionResult> Details(int? id)

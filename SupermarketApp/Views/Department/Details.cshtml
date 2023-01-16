@@ -3,38 +3,43 @@
 @{
     ViewData["Title"] = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    string image = $"data:image/png;base64,{Model.Image}";
 }
 
-<h1>Details</h1>
+<div class="department-form">
+    <img class="details__image" src="@image" alt="@Model.Name" />
+    <div class="details__info">
+        <h3>@Model.Name</h3>
+        <p>@Model.Description</p>
+    </div>
+    <div class="departments-btn-wrapper">
+        <a class="details__link"  asp-action="Edit" asp-route-id="@Model?.Id">Edit</a>
+        <a class="details__link"  asp-action="Index">Back to List</a>
+    </div>
+</div>
 
-<div>
-    <h4>Department</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Image)
-        </dt>
-        <dd class="col-sm-10">
-            @{
-                string image = $"data:image/jpg;base64, {Model.Image}";
-                <img class="info-image" src="@image" alt="@Model.Name" />
-            }
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-    </dl>
+@{
+    var groupProducts = Model.Products.GroupBy(p => p.Manufacturer.Name);
+}
+<div class="details-products-container">
+    <h2 class="text-center mb-3 mt-3">Department Products</h2>
+        @foreach (var products in groupProducts)
+        {
+            <h3>@products.Key</h3>
+            <hr />
+            <ul class="products__list">
+            @foreach (var product in products)
+                {
+                    string productImg = $"data:image/png;base64,{product.Image}";
+                    <li class="products__subitem">
+                        <h3 class="products__name">@product.Name</h3>
+                        <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id" class="products__link">
+                            <img class="products__image" src="@productImg" alt="@product.Name" />
+                        </a>
+                    </li>
+                }
+            </ul>
+        }
+    
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+

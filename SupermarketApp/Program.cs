@@ -18,17 +18,17 @@ string? connection = builder.Configuration.GetConnectionString("DefaultConnectio
 builder.Services.AddDbContext<SupermarketContext>(options => options.UseSqlServer(connection));
 
 // Add services to the container.
-builder.Services.AddTransient<IRepository<Department>, DepartmentRepository>();
-builder.Services.AddTransient<IRepository<Manufacturer>, ManufacturerRepository>();
-builder.Services.AddTransient<IRepository<Product>, ProductRepository>();
+builder.Services.AddScoped<IRepository<Department>, DepartmentRepository>();
+builder.Services.AddScoped<IRepository<Manufacturer>, ManufacturerRepository>();
+builder.Services.AddScoped<IRepository<Product>, ProductRepository>();
 
-builder.Services.AddTransient<IValidator<DepartmentModel>, DepartmentValidator>();
-builder.Services.AddTransient<IValidator<ManufacturerModel>, ManufacturerValidator>();
-builder.Services.AddTransient<IValidator<ProductModel>, ProductValidator>();
+builder.Services.AddScoped<IValidator<DepartmentModel>, DepartmentValidator>();
+builder.Services.AddScoped<IValidator<ManufacturerModel>, ManufacturerValidator>();
+builder.Services.AddScoped<IValidator<ProductModel>, ProductValidator>();
 
-builder.Services.AddTransient<IDepartmentService, DepartmentService>();
-builder.Services.AddTransient<IManufacturerService, ManufacturerService>();
-builder.Services.AddTransient<IProductService, ProductService>();
+builder.Services.AddScoped<IDepartmentService, DepartmentService>();
+builder.Services.AddScoped<IManufacturerService, ManufacturerService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 
 builder.Services.AddAutoMapper(
     typeof(DepartmentProfile),

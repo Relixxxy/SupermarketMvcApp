@@ -70,5 +70,6 @@
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-controller="Manufacturer" asp-action="Edit" asp-route-id="@Model.ManufacturerId">Back to List</a>
+    <a asp-controller="Manufacturer" asp-action="Edit" asp-route-id="@Model.ManufacturerId">Back to List</a> |
+    <a asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
 </div>

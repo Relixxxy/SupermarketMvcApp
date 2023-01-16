@@ -1,46 +1,92 @@
-﻿@model DepartmentModel
+﻿@using SupermarketApp.BL.Service.Interfaces;
+@model DepartmentModel
+@inject IProductService ProductService
 
 @{
     ViewData["Title"] = "Edit";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    string image = $"data:image/png;base64,{Model.Image}";
+    var allProducts = await ProductService.GetProductsAsync();
+    var availableProducts = allProducts.Except(Model.Products);
 }
 
-<h1>Edit</h1>
 
-<h4>Department</h4>
-<hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit" enctype="multipart/form-data">
+    <div class="col">
+        <form class="department-form" asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            @{
-                string image = $"data:image/png;base64,{Model.Image}";
-            }
-            <div class='form-group mb-2'>
-                <label class="control-label" for="imageFile">Enter Image</label>
+            <div class='form-image-wrapper'>
                 <label class="image-label" style="background-image: url('@image')">
                     <input asp-for="ImageFile" class="form-control image-input" type="file">
                     <div class="image-square"></div>
                 </label>
                 <span asp-validation-for="ImageFile" class="text-danger"></span>
             </div>
+            <div class="form-fields">
+                <div class="form-item-wrapper">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-item-wrapper">
+                    <label asp-for="Description" class="control-label"></label>
+                    <textarea asp-for="Description" class="form-control form-textarea"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+            </div>
+
             <input type="hidden" asp-for="Image" />
             <input type="hidden" asp-for="Id" />
-            <div class="form-group mt-3 d-flex justify-content-around">
-                <input type="submit" value="Save" class="btn btn-primary" />
-                <a asp-action="Index">Back to List</a>
+            <div class="departments-btn-wrapper">
+                <input class="details__link" type="submit" value="Save" />
+                <a class="details__link" asp-action="Index">Back to List</a>
             </div>
         </form>
+    </div>
+</div>
+
+<div class="row p-3">
+    <div class="col-6 department-products-container p-1">
+        <h2 class="text-center">Department Products</h2>
+        <ul class="products__list">
+            @foreach (var product in Model.Products)
+            {
+                string productImg = $"data:image/png;base64,{product.Image}";
+                <li class="products__subitem">
+                    <h3 class="products__name">@product.Name</h3>
+                    <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id" class="products__link">
+                        <img class="products__image" src="@productImg" alt="@product.Name" />
+                    </a>
+                    <form asp-controller="Product" asp-action="ChangeDepartmet">
+                        <input type="hidden" value="clear" name="action" />
+                        <input type="hidden" value="@product.Id" name="id" />
+                        <input type="hidden" value="@Model.Id" name="departmentId" />
+                        <button class="details__link" type="submit">Remove</button>
+                    </form>
+                </li>
+            }
+        </ul>
+    </div>
+    <div class="col-6 all-products-container p-1">
+        <h2 class="text-center">Available Products</h2>
+        <ul class="products__list">
+            @foreach (var product in availableProducts)
+            {
+                string productImg = $"data:image/png;base64,{product.Image}";
+                <li class="products__subitem">
+                    <h3 class="products__name">@product.Name</h3>
+                    <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id" class="products__link">
+                        <img class="products__image" src="@productImg" alt="@product.Name" />
+                    </a>
+                    <form asp-controller="Product" asp-action="ChangeDepartmet">
+                        <input type="hidden" value="set" name="action" />
+                        <input type="hidden" value="@product.Id" name="id" />
+                        <input type="hidden" value="@Model.Id" name="departmentId" />
+                        <button class="details__link" type="submit">Add</button>
+                    </form>
+                </li>
+            }
+        </ul>
     </div>
 </div>
 
