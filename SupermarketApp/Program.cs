@@ -13,7 +13,7 @@ using SupermarketApp.Core.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-string? connection = builder.Configuration.GetConnectionString("SupermarketConnection");
+string? connection = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<SupermarketContext>(options => options.UseSqlServer(connection));
 
 // Add services to the container.
