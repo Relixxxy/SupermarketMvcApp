@@ -1,4 +1,3 @@
-using System.Reflection;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +13,7 @@ using SupermarketApp.Core.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-string? connection = builder.Configuration.GetConnectionString("DefaultConnection");
+string? connection = builder.Configuration.GetConnectionString("SupermarketConnection");
 builder.Services.AddDbContext<SupermarketContext>(options => options.UseSqlServer(connection));
 
 // Add services to the container.
