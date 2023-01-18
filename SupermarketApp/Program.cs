@@ -38,19 +38,16 @@ builder.Services.AddAutoMapper(
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+//builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-/*if (!app.Environment.IsDevelopment())
+if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
-}*/
-
-app.UseExceptionHandler("/Home/Error");
-app.UseHsts();
+}
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

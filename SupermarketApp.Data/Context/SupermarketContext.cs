@@ -9,6 +9,7 @@ namespace SupermarketApp.Data.Context
         public SupermarketContext(DbContextOptions<SupermarketContext> options)
             : base(options)
         {
+            Database.EnsureCreated();
         }
 
         public DbSet<Department> Departments { get; set; }
