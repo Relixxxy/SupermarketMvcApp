@@ -38,7 +38,6 @@ builder.Services.AddAutoMapper(
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddFluentValidationAutoValidation();
-//builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
 var app = builder.Build();
 
